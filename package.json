@@ -3,7 +3,15 @@
   "version": "2.0.0",
   "description": "React native module to start foreground service on android",
   "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "README.md",
+    "android",
+    "index.js",
+    "index.d.ts"
+  ],
   "scripts": {
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -21,5 +29,8 @@
   "homepage": "https://github.com/voximplant/react-native-foreground-service",
   "peerDependencies": {
     "react-native": ">= 0.41.2"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.4"
   }
 }
