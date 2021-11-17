@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "push": "yarn build && git add . && git commit -m 'updated' && git push"
+    "push": "yarn build && git add . && git commit -m $message && git push"
   },
   "repository": {
     "type": "git",
