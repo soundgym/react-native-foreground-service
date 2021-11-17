@@ -12,6 +12,9 @@ const VIForegroundService = {
     stopService: async () => {
         return await ForegroundServiceModule.stopService();
     },
+    updateService: async (notificationConfig) => {
+        await ForegroundServiceModule.updateService(notificationConfig);
+    },
 };
 exports.default = VIForegroundService;
 //# sourceMappingURL=index.js.map

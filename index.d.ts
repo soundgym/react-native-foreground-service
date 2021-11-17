@@ -19,6 +19,7 @@ export interface IVIForegroundService {
     createNotificationChannel(channelConfig: IChannelConfig): Promise<void>;
     startService(notificationConfig: INotificationConfig): Promise<void>;
     stopService(): Promise<void>;
+    updateService(notificationConfig: INotificationConfig): Promise<void>;
 }
 declare const VIForegroundService: IVIForegroundService;
 export default VIForegroundService;
