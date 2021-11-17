@@ -5,7 +5,9 @@
 package com.voximplant.foregroundservice;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -35,9 +37,26 @@ public class VIForegroundService extends Service {
                 }
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_STOP)) {
                 stopSelf();
+            } else if(action.equals(Constants.ACTION_FOREGROUND_SERVICE_UPDATE)) {
+                if (intent.getExtras() != null && intent.getExtras().containsKey(NOTIFICATION_CONFIG)) {
+                    Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
+                    if (notificationConfig != null && notificationConfig.containsKey("id")) {
+                        Notification notification = NotificationHelper.getInstance(getApplicationContext())
+                                .buildNotification(getApplicationContext(), notificationConfig);
+                        updateNotification((int)notificationConfig.getDouble("id"), notification);
+                    }
+                }
             }
         }
         return START_NOT_STICKY;
 
+    }
+
+    /**
+     * This is the method that can be called to update the Notification
+     */
+    private void updateNotification(int notificationId,Notification notification) {
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(notificationId, notification);
     }
 }

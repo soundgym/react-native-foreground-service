@@ -98,4 +98,49 @@ public class VIForegroundServiceModule extends ReactContextBaseJavaModule {
             promise.reject(ERROR_SERVICE_ERROR, "VIForegroundService: Foreground service failed to stop");
         }
     }
+
+    @ReactMethod
+    public void updateService(ReadableMap notificationConfig, Promise promise) {
+        if (notificationConfig == null) {
+            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: Notification config is invalid");
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (!notificationConfig.hasKey("channelId")) {
+                promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: channelId is required");
+                return;
+            }
+        }
+
+        if (!notificationConfig.hasKey("id")) {
+            promise.reject(ERROR_INVALID_CONFIG , "VIForegroundService: id is required");
+            return;
+        }
+
+        if (!notificationConfig.hasKey("icon")) {
+            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: icon is required");
+            return;
+        }
+
+        if (!notificationConfig.hasKey("title")) {
+            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: title is reqired");
+            return;
+        }
+
+        if (!notificationConfig.hasKey("text")) {
+            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: text is required");
+            return;
+        }
+
+        Intent intent = new Intent(getReactApplicationContext(), VIForegroundService.class);
+        intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_UPDATE);
+        intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
+        ComponentName componentName = getReactApplicationContext().startService(intent);
+        if (componentName != null) {
+            promise.resolve(null);
+        } else {
+            promise.reject(ERROR_SERVICE_ERROR, "VIForegroundService: Foreground service is not started");
+        }
+    }
 }

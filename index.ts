@@ -55,6 +55,8 @@ export interface IVIForegroundService {
   startService(notificationConfig: INotificationConfig): Promise<void>;
 
   stopService(): Promise<void>;
+
+  updateService(notificationConfig: INotificationConfig): Promise<void>;
 }
 
 const VIForegroundService: IVIForegroundService = {
@@ -86,6 +88,9 @@ const VIForegroundService: IVIForegroundService = {
    */
   stopService: async () => {
     return await ForegroundServiceModule.stopService();
+  },
+  updateService: async (notificationConfig) => {
+    await ForegroundServiceModule.updateService(notificationConfig);
   },
 };
 
