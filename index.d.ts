@@ -14,6 +14,7 @@ export interface INotificationConfig {
     text: string;
     icon: string;
     priority?: Priority;
+    ongoing?: boolean;
 }
 export interface IVIForegroundService {
     createNotificationChannel(channelConfig: IChannelConfig): Promise<void>;

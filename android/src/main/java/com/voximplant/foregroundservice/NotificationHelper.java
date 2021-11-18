@@ -32,7 +32,7 @@ class NotificationHelper {
     }
 
     private NotificationHelper(Context context) {
-        mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
     }
 
@@ -96,7 +96,7 @@ class NotificationHelper {
             notificationBuilder = new Notification.Builder(context);
         }
 
-        int priorityInt = notificationConfig.containsKey("priority") ? notificationConfig.getInt("priority"): Notification.PRIORITY_HIGH;
+        int priorityInt = notificationConfig.containsKey("priority") ? notificationConfig.getInt("priority") : Notification.PRIORITY_HIGH;
 
         int priority;
         switch (priorityInt) {
@@ -121,10 +121,16 @@ class NotificationHelper {
 
         }
 
+        Boolean ongoing = notificationConfig.getBoolean("ongoing");
+        if (ongoing == null) {
+            ongoing = false;
+        }
+
         notificationBuilder.setContentTitle(notificationConfig.getString("title"))
                 .setContentText(notificationConfig.getString("text"))
                 .setPriority(priority)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+                .setOngoing(ongoing);
 
         String iconName = notificationConfig.getString("icon");
         if (iconName != null) {
@@ -137,7 +143,7 @@ class NotificationHelper {
     /**
      * This is the method that can be called to update the Notification
      */
-    void updateNotification(int notificationId,Notification notification) {
+    void updateNotification(int notificationId, Notification notification) {
         mNotificationManager.notify(notificationId, notification);
     }
 

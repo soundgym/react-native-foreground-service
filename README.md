@@ -78,14 +78,17 @@ OR
 
 ## Demo project
 
-Demo application: [react-native-foreground-service-demo](https://github.com/voximplant/react-native-foreground-service-demo)
+Demo application: none
 
 ## Usage
 
 ### Import module
 
-```javascript
-import VIForegroundService from "@voximplant/react-native-foreground-service";
+```ts
+import VIForegroundService, {
+  IChannelConfig,
+  INotificationConfig,
+} from "react-native-foreground-service-android";
 ```
 
 ### Create notification channel (Android 8+)
@@ -93,8 +96,8 @@ import VIForegroundService from "@voximplant/react-native-foreground-service";
 Since the foreground service must display a notification, for Android 8+ it is required to create a notification
 channel first:
 
-```javascript
-const channelConfig = {
+```ts
+const channelConfig: IChannelConfig = {
   id: "channelId",
   name: "Channel name",
   description: "Channel description",
@@ -107,12 +110,13 @@ VIForegroundService.createNotificationChannel(channelConfig);
 
 ```javascript
 async startForegroundService() {
-    const notificationConfig = {
+    const notificationConfig: INotificationConfig = {
         channelId: 'channelId', // you must same channelId and id
         id: 3456,
         title: 'Title',
         text: 'Some text',
-        icon: 'ic_icon'
+        icon: 'ic_icon',
+        ongoing: true // default false
     };
     try {
         await VIForegroundService.updateService(notificationConfig);
@@ -131,7 +135,8 @@ async startForegroundService() {
         id: 3456,
         title: 'Title',
         text: 'Some text',
-        icon: 'ic_icon'
+        icon: 'ic_icon',
+        ongoing: true // default false
     };
     try {
         await VIForegroundService.startService(notificationConfig);
@@ -210,5 +215,6 @@ NotificationConfig;
 | text          | Notification text                                                                                                                                                                                                   | yes                   |
 | icon          | Icon name                                                                                                                                                                                                           | yes                   |
 | priority      | Priority of this notification. One of: <ul><li>&nbsp;0 – PRIORITY_DEFAULT (by default)</li><li>-1 – PRIORITY_LOW</li><li>-2 – PRIORITY_MIN</li><li>&nbsp;1 – PRIORITY_HIGH</li><li>&nbsp;2 – PRIORITY_MAX</li></ul> | no                    |
+| ongoing       | To keep the notification or prevent the user from erasing the notification even if the user shuts down the app,                                                                                                     | no                    |
 
 [libray-link]: https://github.com/voximplant/react-native-foreground-service
