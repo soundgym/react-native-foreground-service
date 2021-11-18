@@ -23,7 +23,8 @@
     "foreground",
     "service",
     "android",
-    "voximplant"
+    "ko-devHong",
+    "react-native-foreground"
   ],
   "author": "Lee tae hong. <hongdeveloper@gmail.com>",
   "license": "MIT",
