@@ -137,7 +137,7 @@ public class VIForegroundServiceModule extends ReactContextBaseJavaModule {
         Bundle updateBundle = Arguments.toBundle(notificationConfig);
         NotificationHelper mNotificationHelper = NotificationHelper.getInstance(this.reactContext);
         Notification updateNotification = mNotificationHelper.buildNotification(this.reactContext,updateBundle);
-        mNotificationHelper.updateNotification(updateBundle.getInt("id"),updateNotification);
+        mNotificationHelper.updateNotification(Integer.parseInt(String.valueOf(updateBundle.getDouble("id"))),updateNotification);
         if (updateNotification != null) {
             promise.resolve(null);
         } else {
