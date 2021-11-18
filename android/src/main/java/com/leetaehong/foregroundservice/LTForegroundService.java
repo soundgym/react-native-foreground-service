@@ -2,20 +2,17 @@
  * Copyright (c) 2011-2019, Zingaya, Inc. All rights reserved.
  */
 
-package com.voximplant.foregroundservice;
+package com.leetaehong.foregroundservice;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 
-import static com.voximplant.foregroundservice.Constants.NOTIFICATION_CONFIG;
+import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 
-public class VIForegroundService extends Service {
+public class LTForegroundService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -42,13 +39,5 @@ public class VIForegroundService extends Service {
         }
         return START_NOT_STICKY;
 
-    }
-
-    /**
-     * This is the method that can be called to update the Notification
-     */
-    private void updateNotification(int notificationId,Notification notification) {
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(notificationId, notification);
     }
 }

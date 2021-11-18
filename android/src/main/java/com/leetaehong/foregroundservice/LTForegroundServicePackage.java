@@ -2,7 +2,7 @@
  * Copyright (c) 2011-2019, Zingaya, Inc. All rights reserved.
  */
 
-package com.voximplant.foregroundservice;
+package com.leetaehong.foregroundservice;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,10 +14,10 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 import com.facebook.react.bridge.JavaScriptModule;
 
-public class VIForegroundServicePackage implements ReactPackage {
+public class LTForegroundServicePackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-        return Arrays.<NativeModule>asList(new VIForegroundServiceModule(reactContext));
+        return Arrays.<NativeModule>asList(new LTForegroundServiceModule(reactContext));
     }
 
     // Deprecated from RN 0.47

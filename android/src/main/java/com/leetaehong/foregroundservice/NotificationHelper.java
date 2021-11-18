@@ -2,7 +2,7 @@
  * Copyright (c) 2011-2019, Zingaya, Inc. All rights reserved.
  */
 
-package com.voximplant.foregroundservice;
+package com.leetaehong.foregroundservice;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -17,8 +17,8 @@ import android.util.Log;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableMap;
 
-import static com.voximplant.foregroundservice.Constants.ERROR_ANDROID_VERSION;
-import static com.voximplant.foregroundservice.Constants.ERROR_INVALID_CONFIG;
+import static com.leetaehong.foregroundservice.Constants.ERROR_ANDROID_VERSION;
+import static com.leetaehong.foregroundservice.Constants.ERROR_INVALID_CONFIG;
 
 class NotificationHelper {
     private static NotificationHelper instance = null;

@@ -16,11 +16,16 @@ export interface INotificationConfig {
     priority?: Priority;
     ongoing?: boolean;
 }
+export interface IBackgroundConfig {
+    taskName: string;
+    delay?: number;
+}
 export interface IVIForegroundService {
     createNotificationChannel(channelConfig: IChannelConfig): Promise<void>;
     startService(notificationConfig: INotificationConfig): Promise<void>;
     stopService(): Promise<void>;
     updateService(notificationConfig: INotificationConfig): Promise<void>;
+    backgroundStartService(task: (taskData?: IBackgroundConfig) => Promise<void>, backgroundConfig: IBackgroundConfig): Promise<void>;
 }
 declare const VIForegroundService: IVIForegroundService;
 export default VIForegroundService;

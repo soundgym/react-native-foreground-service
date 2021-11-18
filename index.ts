@@ -1,5 +1,5 @@
 //@ts-ignore
-import { NativeModules } from "react-native";
+import { AppRegistry, NativeModules } from "react-native";
 
 const ForegroundServiceModule = NativeModules.VIForegroundService;
 
@@ -50,6 +50,14 @@ export interface INotificationConfig {
   ongoing?: boolean;
 }
 
+/**
+ * @property {string} taskName - background Task Name
+ */
+export interface IBackgroundConfig {
+  taskName: string;
+  delay?: number;
+}
+
 export interface IVIForegroundService {
   createNotificationChannel(channelConfig: IChannelConfig): Promise<void>;
 
@@ -58,13 +66,32 @@ export interface IVIForegroundService {
   stopService(): Promise<void>;
 
   updateService(notificationConfig: INotificationConfig): Promise<void>;
+
+  backgroundStartService(
+    task: (taskData?: IBackgroundConfig) => Promise<void>,
+    backgroundConfig: IBackgroundConfig
+  ): Promise<void>;
 }
+
+let stopTask = (_: unknown) => {};
+
+const generateTask = (
+  task: (taskData?: IBackgroundConfig) => Promise<void>,
+  parameters: IBackgroundConfig
+) => {
+  return async () => {
+    await new Promise((resolve) => {
+      stopTask = resolve;
+      task(parameters).then(() => stopTask({}));
+    });
+  };
+};
 
 const VIForegroundService: IVIForegroundService = {
   /**
    * Create notification channel for foreground service
    *
-   * @param {NotificationChannelConfig} channelConfig - Notification channel configuration
+   * @param {IChannelConfig} channelConfig - Notification channel configuration
    * @return Promise
    */
   createNotificationChannel: async (channelConfig) => {
@@ -75,7 +102,7 @@ const VIForegroundService: IVIForegroundService = {
 
   /**
    * Start foreground service
-   * @param {NotificationConfig} notificationConfig - Notification config
+   * @param {INotificationConfig} notificationConfig - Notification config
    * @return Promise
    */
   startService: async (notificationConfig) => {
@@ -88,10 +115,31 @@ const VIForegroundService: IVIForegroundService = {
    * @return Promise
    */
   stopService: async () => {
+    await stopTask({});
     return await ForegroundServiceModule.stopService();
   },
+
+  /**
+   * Update foreground service
+   * @param {INotificationConfig} notificationConfig - Notification config
+   * @return void
+   */
   updateService: async (notificationConfig) => {
     await ForegroundServiceModule.updateService(notificationConfig);
+  },
+
+  /**
+   * You can start background service
+   * @param {IBackgroundConfig} backgroundConfig - Background config
+   * @param {(taskData?: IBackgroundConfig) => Promise<void>} task - Background task
+   * @return void
+   */
+  backgroundStartService: async (task, backgroundConfig) => {
+    const finalTask = generateTask(task, backgroundConfig);
+    AppRegistry.registerHeadlessTask(
+      backgroundConfig.taskName,
+      () => finalTask
+    );
   },
 };
 

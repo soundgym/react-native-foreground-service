@@ -2,7 +2,7 @@
  * Copyright (c) 2011-2019, Zingaya, Inc. All rights reserved.
  */
 
-package com.voximplant.foregroundservice;
+package com.leetaehong.foregroundservice;
 
 class Constants {
     static final String ACTION_FOREGROUND_SERVICE_START = "com.voximplant.foregroundservice.service_start";

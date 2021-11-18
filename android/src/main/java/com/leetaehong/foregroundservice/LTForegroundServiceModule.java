@@ -2,7 +2,7 @@
  * Copyright (c) 2011-2019, Zingaya, Inc. All rights reserved.
  */
 
-package com.voximplant.foregroundservice;
+package com.leetaehong.foregroundservice;
 
 import android.app.Notification;
 import android.content.ComponentName;
@@ -17,15 +17,15 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 
-import static com.voximplant.foregroundservice.Constants.ERROR_INVALID_CONFIG;
-import static com.voximplant.foregroundservice.Constants.ERROR_SERVICE_ERROR;
-import static com.voximplant.foregroundservice.Constants.NOTIFICATION_CONFIG;
+import static com.leetaehong.foregroundservice.Constants.ERROR_INVALID_CONFIG;
+import static com.leetaehong.foregroundservice.Constants.ERROR_SERVICE_ERROR;
+import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 
-public class VIForegroundServiceModule extends ReactContextBaseJavaModule {
+public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext reactContext;
 
-    public VIForegroundServiceModule(ReactApplicationContext reactContext) {
+    public LTForegroundServiceModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
     }
@@ -78,7 +78,7 @@ public class VIForegroundServiceModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        Intent intent = new Intent(getReactApplicationContext(), VIForegroundService.class);
+        Intent intent = new Intent(getReactApplicationContext(), LTForegroundService.class);
         intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_START);
         intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
         ComponentName componentName = getReactApplicationContext().startService(intent);
@@ -91,7 +91,7 @@ public class VIForegroundServiceModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void stopService(Promise promise) {
-        Intent intent = new Intent(getReactApplicationContext(), VIForegroundService.class);
+        Intent intent = new Intent(getReactApplicationContext(), LTForegroundService.class);
         intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_STOP);
         boolean stopped = getReactApplicationContext().stopService(intent);
         if (stopped) {
