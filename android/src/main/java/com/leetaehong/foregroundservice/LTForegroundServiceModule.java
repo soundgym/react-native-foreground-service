@@ -32,13 +32,13 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
 
     @Override
     public String getName() {
-        return "VIForegroundService";
+        return "LTForegroundService";
     }
 
     @ReactMethod
     public void createNotificationChannel(ReadableMap channelConfig, Promise promise) {
         if (channelConfig == null) {
-            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: Channel config is invalid");
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: Channel config is invalid");
             return;
         }
         NotificationHelper.getInstance(getReactApplicationContext()).createNotificationChannel(channelConfig, promise);
@@ -47,34 +47,34 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void startService(ReadableMap notificationConfig, Promise promise) {
         if (notificationConfig == null) {
-            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: Notification config is invalid");
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: Notification config is invalid");
             return;
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (!notificationConfig.hasKey("channelId")) {
-                promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: channelId is required");
+                promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: channelId is required");
                 return;
             }
         }
 
         if (!notificationConfig.hasKey("id")) {
-            promise.reject(ERROR_INVALID_CONFIG , "VIForegroundService: id is required");
+            promise.reject(ERROR_INVALID_CONFIG , "LTForegroundService: id is required");
             return;
         }
 
         if (!notificationConfig.hasKey("icon")) {
-            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: icon is required");
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: icon is required");
             return;
         }
 
         if (!notificationConfig.hasKey("title")) {
-            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: title is reqired");
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: title is reqired");
             return;
         }
 
         if (!notificationConfig.hasKey("text")) {
-            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: text is required");
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: text is required");
             return;
         }
 
@@ -85,7 +85,7 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         if (componentName != null) {
             promise.resolve(null);
         } else {
-            promise.reject(ERROR_SERVICE_ERROR, "VIForegroundService: Foreground service is not started");
+            promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service is not started");
         }
     }
 
@@ -97,41 +97,41 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         if (stopped) {
             promise.resolve(null);
         } else {
-            promise.reject(ERROR_SERVICE_ERROR, "VIForegroundService: Foreground service failed to stop");
+            promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service failed to stop");
         }
     }
 
     @ReactMethod
     public void updateService(ReadableMap notificationConfig, Promise promise) {
         if (notificationConfig == null) {
-            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: Notification config is invalid");
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: Notification config is invalid");
             return;
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (!notificationConfig.hasKey("channelId")) {
-                promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: channelId is required");
+                promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: channelId is required");
                 return;
             }
         }
 
         if (!notificationConfig.hasKey("id")) {
-            promise.reject(ERROR_INVALID_CONFIG , "VIForegroundService: id is required");
+            promise.reject(ERROR_INVALID_CONFIG , "LTForegroundService: id is required");
             return;
         }
 
         if (!notificationConfig.hasKey("icon")) {
-            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: icon is required");
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: icon is required");
             return;
         }
 
         if (!notificationConfig.hasKey("title")) {
-            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: title is reqired");
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: title is reqired");
             return;
         }
 
         if (!notificationConfig.hasKey("text")) {
-            promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: text is required");
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: text is required");
             return;
         }
         Bundle updateBundle = Arguments.toBundle(notificationConfig);
@@ -141,7 +141,7 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         if (updateNotification != null) {
             promise.resolve(null);
         } else {
-            promise.reject(ERROR_SERVICE_ERROR, "VIForegroundService: Foreground service is not started");
+            promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service is not started");
         }
     }
 }
