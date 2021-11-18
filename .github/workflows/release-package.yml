@@ -3,7 +3,7 @@ name: react-native-foreground-service-android Package
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
