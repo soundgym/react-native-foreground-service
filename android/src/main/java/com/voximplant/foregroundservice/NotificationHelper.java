@@ -134,6 +134,13 @@ class NotificationHelper {
         return notificationBuilder.build();
     }
 
+    /**
+     * This is the method that can be called to update the Notification
+     */
+    void updateNotification(int notificationId,Notification notification) {
+        mNotificationManager.notify(notificationId, notification);
+    }
+
     private Class getMainActivityClass(Context context) {
         String packageName = context.getPackageName();
         Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);

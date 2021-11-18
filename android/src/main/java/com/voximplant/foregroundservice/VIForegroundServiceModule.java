@@ -4,9 +4,11 @@
 
 package com.voximplant.foregroundservice;
 
+import android.app.Notification;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -132,12 +134,11 @@ public class VIForegroundServiceModule extends ReactContextBaseJavaModule {
             promise.reject(ERROR_INVALID_CONFIG, "VIForegroundService: text is required");
             return;
         }
-
-        Intent intent = new Intent(getReactApplicationContext(), VIForegroundService.class);
-        intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_UPDATE);
-        intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
-        ComponentName componentName = getReactApplicationContext().startService(intent);
-        if (componentName != null) {
+        Bundle updateBundle = Arguments.toBundle(notificationConfig);
+        NotificationHelper mNotificationHelper = NotificationHelper.getInstance(this.reactContext);
+        Notification updateNotification = mNotificationHelper.buildNotification(this.reactContext,updateBundle);
+        mNotificationHelper.updateNotification(updateBundle.getInt("id"),updateNotification);
+        if (updateNotification != null) {
             promise.resolve(null);
         } else {
             promise.reject(ERROR_SERVICE_ERROR, "VIForegroundService: Foreground service is not started");

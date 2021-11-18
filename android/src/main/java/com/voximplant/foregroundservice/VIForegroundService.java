@@ -32,22 +32,12 @@ public class VIForegroundService extends Service {
                     if (notificationConfig != null && notificationConfig.containsKey("id")) {
                         Notification notification = NotificationHelper.getInstance(getApplicationContext())
                                 .buildNotification(getApplicationContext(), notificationConfig);
-                        Log.d("onStartCommand call!!","is start");
-                        startForeground((int)notificationConfig.getDouble("id"), notification);
+
+                        startForeground(notificationConfig.getInt("id"), notification);
                     }
                 }
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_STOP)) {
                 stopSelf();
-            } else if(action.equals(Constants.ACTION_FOREGROUND_SERVICE_UPDATE)) {
-                if (intent.getExtras() != null && intent.getExtras().containsKey(NOTIFICATION_CONFIG)) {
-                    Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
-                    if (notificationConfig != null && notificationConfig.containsKey("id")) {
-                        Notification notification = NotificationHelper.getInstance(getApplicationContext())
-                                .buildNotification(getApplicationContext(), notificationConfig);
-                        Log.d("onStartCommand call!!","is update");
-                        updateNotification((int)notificationConfig.getDouble("id"), notification);
-                    }
-                }
             }
         }
         return START_NOT_STICKY;
