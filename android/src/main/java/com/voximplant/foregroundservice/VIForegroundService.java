@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
 import static com.voximplant.foregroundservice.Constants.NOTIFICATION_CONFIG;
 
@@ -31,7 +32,7 @@ public class VIForegroundService extends Service {
                     if (notificationConfig != null && notificationConfig.containsKey("id")) {
                         Notification notification = NotificationHelper.getInstance(getApplicationContext())
                                 .buildNotification(getApplicationContext(), notificationConfig);
-
+                        Log.d("onStartCommand call!!","is start");
                         startForeground((int)notificationConfig.getDouble("id"), notification);
                     }
                 }
@@ -43,6 +44,7 @@ public class VIForegroundService extends Service {
                     if (notificationConfig != null && notificationConfig.containsKey("id")) {
                         Notification notification = NotificationHelper.getInstance(getApplicationContext())
                                 .buildNotification(getApplicationContext(), notificationConfig);
+                        Log.d("onStartCommand call!!","is update");
                         updateNotification((int)notificationConfig.getDouble("id"), notification);
                     }
                 }
