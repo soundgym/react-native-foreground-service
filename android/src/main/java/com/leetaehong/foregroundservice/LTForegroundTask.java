@@ -47,7 +47,10 @@ public class LTForegroundTask extends HeadlessJsTaskService {
                 if (backgroundConfig != null && backgroundConfig.containsKey("id")) {
                     Notification notification = NotificationHelper.getInstance(getApplicationContext())
                             .buildNotification(getApplicationContext(), backgroundConfig,NotificationType.BACKGROUND);
-
+                    if(backgroundConfig.getBoolean("ongoing")) {
+                        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+                        notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+                    }
                     startForeground((int)backgroundConfig.getDouble("id"), notification);
                 }
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_STOP)) {

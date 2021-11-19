@@ -30,7 +30,10 @@ public class LTForegroundService extends Service {
                     if (notificationConfig != null && notificationConfig.containsKey("id")) {
                         Notification notification = NotificationHelper.getInstance(getApplicationContext())
                                 .buildNotification(getApplicationContext(), notificationConfig, NotificationType.FOREGROUND);
-
+                        if(notificationConfig.getBoolean("ongoing")) {
+                            notification.flags |= Notification.FLAG_ONGOING_EVENT;
+                            notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+                        }
                         startForeground((int)notificationConfig.getDouble("id"), notification);
                     }
                 }

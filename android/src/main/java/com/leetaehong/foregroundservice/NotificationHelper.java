@@ -140,9 +140,7 @@ class NotificationHelper {
 
         if(ongoing) {
             notificationBuilder.setOngoing(true);
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                notificationBuilder.setFlag(Notification.FLAG_ONGOING_EVENT,true);
-            }
+            notificationBuilder.setAutoCancel(false);
         }
 
         if(NotificationType.BACKGROUND.equals(notificationType)) {
