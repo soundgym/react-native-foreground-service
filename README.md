@@ -27,9 +27,9 @@ OR
      ```
      <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
      ```
-  2. Add VIForegroundService as a service to the application's `AndroidManifest.xml`:
+  2. Add LTForegroundService as a service to the application's `AndroidManifest.xml`:
      ```
-     <service android:name="com.leetaehong.foregroundservice.VIForegroundService"
+     <service android:name="com.leetaehong.foregroundservice.LTForegroundService"
      android:exported="true" <- If you want it to be maintained even after the app is turned off, default : "false"
      />
      ```
@@ -48,9 +48,9 @@ OR
      ```
      <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
      ```
-  2. Add VIForegroundService as a service to the application's `AndroidManifest.xml`:
+  2. Add LTForegroundService as a service to the application's `AndroidManifest.xml`:
      ```
-     <service android:name="com.leetaehong.foregroundservice.VIForegroundService"> </service>
+     <service android:name="com.leetaehong.foregroundservice.LTForegroundService"> </service>
      ```
 
 ### Manual installation (Android only, React Native <= 0.59)
@@ -71,9 +71,9 @@ OR
    ```
    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
    ```
-5. Add VIForegroundService as a service to the application's `AndroidManifest.xml`:
+5. Add LTForegroundService as a service to the application's `AndroidManifest.xml`:
    ```
-   <service android:name="com.leetaehong.foregroundservice.VIForegroundService"> </service>
+   <service android:name="com.leetaehong.foregroundservice.LTForegroundService"> </service>
    ```
 
 ## Demo project
@@ -85,7 +85,7 @@ Demo application: none
 ### Import module
 
 ```ts
-import VIForegroundService, {
+import LTForegroundService, {
   IChannelConfig,
   INotificationConfig,
 } from "react-native-foreground-service-android";
@@ -103,7 +103,7 @@ const channelConfig: IChannelConfig = {
   description: "Channel description",
   enableVibration: false,
 };
-VIForegroundService.createNotificationChannel(channelConfig);
+LTForegroundService.createNotificationChannel(channelConfig);
 ```
 
 ### Update foreground service
@@ -119,7 +119,7 @@ async startForegroundService() {
         ongoing: true // default false
     };
     try {
-        await VIForegroundService.updateService(notificationConfig);
+        await LTForegroundService.updateService(notificationConfig);
     } catch (e) {
         console.error(e);
     }
@@ -139,7 +139,7 @@ async startForegroundService() {
         ongoing: true // default false
     };
     try {
-        await VIForegroundService.startService(notificationConfig);
+        await LTForegroundService.startService(notificationConfig);
     } catch (e) {
         console.error(e);
     }
@@ -149,7 +149,7 @@ async startForegroundService() {
 ### Stop foreground service
 
 ```javascript
-VIForegroundService.stopService();
+LTForegroundService.stopService();
 ```
 
 ## Reference
