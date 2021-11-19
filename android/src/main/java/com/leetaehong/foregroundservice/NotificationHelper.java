@@ -20,6 +20,8 @@ import com.facebook.react.bridge.ReadableMap;
 import static com.leetaehong.foregroundservice.Constants.ERROR_ANDROID_VERSION;
 import static com.leetaehong.foregroundservice.Constants.ERROR_INVALID_CONFIG;
 
+import androidx.annotation.RequiresApi;
+
 class NotificationHelper {
     private static NotificationHelper instance = null;
     private NotificationManager mNotificationManager;
@@ -138,6 +140,9 @@ class NotificationHelper {
 
         if(ongoing) {
             notificationBuilder.setOngoing(true);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                notificationBuilder.setFlag(Notification.FLAG_ONGOING_EVENT,true);
+            }
         }
 
         if(NotificationType.BACKGROUND.equals(notificationType)) {
