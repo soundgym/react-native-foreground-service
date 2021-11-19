@@ -21,6 +21,9 @@ public class LTForegroundTask extends HeadlessJsTaskService {
         if (extras != null) {
             Bundle backgroundConfig = extras.getBundle(BACKGROUND_CONFIG);
             String taskName = backgroundConfig.getString("taskName");
+            if(taskName == null) {
+                taskName = "BackgroundTask";
+            }
             return new HeadlessJsTaskConfig(
                     taskName,
                     Arguments.fromBundle(extras),
