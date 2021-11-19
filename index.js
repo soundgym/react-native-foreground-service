@@ -11,7 +11,7 @@ const generateTask = (task, parameters) => {
         });
     };
 };
-const VIForegroundService = {
+const LTForegroundService = {
     createNotificationChannel: async (channelConfig) => {
         return await ForegroundServiceModule.createNotificationChannel(channelConfig);
     },
@@ -30,5 +30,5 @@ const VIForegroundService = {
         react_native_1.AppRegistry.registerHeadlessTask(backgroundConfig.taskName, () => finalTask);
     },
 };
-exports.default = VIForegroundService;
+exports.default = LTForegroundService;
 //# sourceMappingURL=index.js.map

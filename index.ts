@@ -58,7 +58,7 @@ export interface IBackgroundConfig {
   delay?: number;
 }
 
-export interface IVIForegroundService {
+export interface ILTForegroundService {
   createNotificationChannel(channelConfig: IChannelConfig): Promise<void>;
 
   startService(notificationConfig: INotificationConfig): Promise<void>;
@@ -87,7 +87,7 @@ const generateTask = (
   };
 };
 
-const VIForegroundService: IVIForegroundService = {
+const LTForegroundService: ILTForegroundService = {
   /**
    * Create notification channel for foreground service
    *
@@ -143,4 +143,4 @@ const VIForegroundService: IVIForegroundService = {
   },
 };
 
-export default VIForegroundService;
+export default LTForegroundService;
