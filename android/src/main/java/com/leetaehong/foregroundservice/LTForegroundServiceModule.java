@@ -20,6 +20,7 @@ import com.facebook.react.bridge.ReadableMap;
 import static com.leetaehong.foregroundservice.Constants.ERROR_INVALID_CONFIG;
 import static com.leetaehong.foregroundservice.Constants.ERROR_SERVICE_ERROR;
 import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
+import static com.leetaehong.foregroundservice.Constants.BACKGROUND_CONFIG;
 
 public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
 
@@ -46,44 +47,18 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void startService(ReadableMap notificationConfig, Promise promise) {
-        if (notificationConfig == null) {
-            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: Notification config is invalid");
-            return;
-        }
+        Boolean validResult = NotificationHelper.getInstance(getReactApplicationContext()).validCheckNotificationConfig(notificationConfig, promise);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (!notificationConfig.hasKey("channelId")) {
-                promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: channelId is required");
-                return;
+        if (validResult) {
+            Intent intent = new Intent(getReactApplicationContext(), LTForegroundService.class);
+            intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_START);
+            intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
+            ComponentName componentName = getReactApplicationContext().startService(intent);
+            if (componentName != null) {
+                promise.resolve(null);
+            } else {
+                promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service is not started");
             }
-        }
-
-        if (!notificationConfig.hasKey("id")) {
-            promise.reject(ERROR_INVALID_CONFIG , "LTForegroundService: id is required");
-            return;
-        }
-
-        if (!notificationConfig.hasKey("icon")) {
-            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: icon is required");
-            return;
-        }
-
-        if (!notificationConfig.hasKey("title")) {
-            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: title is reqired");
-            return;
-        }
-
-        if (!notificationConfig.hasKey("text")) {
-            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: text is required");
-            return;
-        }
-
-        Intent intent = new Intent(getReactApplicationContext(), LTForegroundService.class);
-        intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_START);
-        intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
-        ComponentName componentName = getReactApplicationContext().startService(intent);
-        if (componentName != null) {
-            promise.resolve(null);
         } else {
             promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service is not started");
         }
@@ -103,45 +78,50 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void updateService(ReadableMap notificationConfig, Promise promise) {
-        if (notificationConfig == null) {
-            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: Notification config is invalid");
-            return;
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (!notificationConfig.hasKey("channelId")) {
-                promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: channelId is required");
-                return;
+        Boolean validResult = NotificationHelper.getInstance(getReactApplicationContext()).validCheckNotificationConfig(notificationConfig, promise);
+        if(validResult) {
+            Bundle updateBundle = Arguments.toBundle(notificationConfig);
+            NotificationHelper mNotificationHelper = NotificationHelper.getInstance(this.reactContext);
+            Notification updateNotification = mNotificationHelper.buildNotification(this.reactContext, updateBundle);
+            mNotificationHelper.updateNotification((int) updateBundle.getDouble("id"), updateNotification);
+            if (updateNotification != null) {
+                promise.resolve(null);
+            } else {
+                promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service is not started");
             }
-        }
-
-        if (!notificationConfig.hasKey("id")) {
-            promise.reject(ERROR_INVALID_CONFIG , "LTForegroundService: id is required");
-            return;
-        }
-
-        if (!notificationConfig.hasKey("icon")) {
-            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: icon is required");
-            return;
-        }
-
-        if (!notificationConfig.hasKey("title")) {
-            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: title is reqired");
-            return;
-        }
-
-        if (!notificationConfig.hasKey("text")) {
-            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: text is required");
-            return;
-        }
-        Bundle updateBundle = Arguments.toBundle(notificationConfig);
-        NotificationHelper mNotificationHelper = NotificationHelper.getInstance(this.reactContext);
-        Notification updateNotification = mNotificationHelper.buildNotification(this.reactContext,updateBundle);
-        mNotificationHelper.updateNotification((int)updateBundle.getDouble("id"),updateNotification);
-        if (updateNotification != null) {
-            promise.resolve(null);
         } else {
             promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service is not started");
+        }
+    }
+
+    @ReactMethod
+    public void backgroundStartService(ReadableMap backgroundConfig, Promise promise) {
+        Boolean validResult = NotificationHelper.getInstance(getReactApplicationContext()).validCheckNotificationConfig(backgroundConfig, promise);
+
+        if (validResult) {
+            Intent intent = new Intent(getReactApplicationContext(), LTForegroundTask.class);
+            intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_START);
+            intent.putExtra(BACKGROUND_CONFIG, Arguments.toBundle(backgroundConfig));
+            ComponentName componentName = getReactApplicationContext().startService(intent);
+            if (componentName != null) {
+                promise.resolve(null);
+            } else {
+                promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service is not started");
+            }
+        } else {
+            promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service is not started");
+        }
+    }
+
+    @ReactMethod
+    public void backgroundStopService(Promise promise) {
+        Intent intent = new Intent(getReactApplicationContext(), LTForegroundTask.class);
+        intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_STOP);
+        boolean stopped = getReactApplicationContext().stopService(intent);
+        if (stopped) {
+            promise.resolve(null);
+        } else {
+            promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service failed to stop");
         }
     }
 }

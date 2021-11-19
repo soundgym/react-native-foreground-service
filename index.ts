@@ -54,8 +54,14 @@ export interface INotificationConfig {
  * @property {string} taskName - background Task Name
  */
 export interface IBackgroundConfig {
-  taskName: string;
   delay?: number;
+  channelId?: string;
+  id: number;
+  title: string;
+  text: string;
+  icon: string;
+  priority?: Priority;
+  ongoing?: boolean;
 }
 
 export interface ILTForegroundService {
@@ -71,6 +77,8 @@ export interface ILTForegroundService {
     task: (taskData?: IBackgroundConfig) => Promise<void>,
     backgroundConfig: IBackgroundConfig
   ): Promise<void>;
+
+  backgroundStopService(): Promise<void>;
 }
 
 let stopTask = (_: unknown) => {};
@@ -115,7 +123,6 @@ const LTForegroundService: ILTForegroundService = {
    * @return Promise
    */
   stopService: async () => {
-    await stopTask({});
     return await ForegroundServiceModule.stopService();
   },
 
@@ -137,16 +144,18 @@ const LTForegroundService: ILTForegroundService = {
   backgroundStartService: async (task, backgroundConfig) => {
     try {
       const finalTask = generateTask(task, backgroundConfig);
-      console.log("backgroundStartService finalTask generated");
-      AppRegistry.registerHeadlessTask(
-        backgroundConfig.taskName,
-        () => finalTask
-      );
-      console.log("backgroundStartService registerHeadlessTask");
+      AppRegistry.registerHeadlessTask(backgroundConfig.title, () => finalTask);
+      await ForegroundServiceModule.stopService();
+      await ForegroundServiceModule.backgroundStartService(backgroundConfig);
     } catch (err) {
       console.error("backgroundStartService error");
       console.error(err);
     }
+  },
+
+  backgroundStopService: async () => {
+    await stopTask({});
+    return await ForegroundServiceModule.backgroundStopService();
   },
 };
 

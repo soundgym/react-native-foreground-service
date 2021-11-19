@@ -19,7 +19,6 @@ const LTForegroundService = {
         return await ForegroundServiceModule.startService(notificationConfig);
     },
     stopService: async () => {
-        await stopTask({});
         return await ForegroundServiceModule.stopService();
     },
     updateService: async (notificationConfig) => {
@@ -28,14 +27,18 @@ const LTForegroundService = {
     backgroundStartService: async (task, backgroundConfig) => {
         try {
             const finalTask = generateTask(task, backgroundConfig);
-            console.log("backgroundStartService finalTask generated");
-            react_native_1.AppRegistry.registerHeadlessTask(backgroundConfig.taskName, () => finalTask);
-            console.log("backgroundStartService registerHeadlessTask");
+            react_native_1.AppRegistry.registerHeadlessTask(backgroundConfig.title, () => finalTask);
+            await ForegroundServiceModule.stopService();
+            await ForegroundServiceModule.backgroundStartService(backgroundConfig);
         }
         catch (err) {
             console.error("backgroundStartService error");
             console.error(err);
         }
+    },
+    backgroundStopService: async () => {
+        await stopTask({});
+        return await ForegroundServiceModule.backgroundStopService();
     },
 };
 exports.default = LTForegroundService;

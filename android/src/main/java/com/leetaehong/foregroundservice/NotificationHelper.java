@@ -147,6 +147,43 @@ class NotificationHelper {
         mNotificationManager.notify(notificationId, notification);
     }
 
+    Boolean validCheckNotificationConfig(ReadableMap notificationConfig, Promise promise) {
+        if (notificationConfig == null) {
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: Notification config is invalid");
+            return false;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (!notificationConfig.hasKey("channelId")) {
+                promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: channelId is required");
+                return false;
+            }
+        }
+
+        if (!notificationConfig.hasKey("id")) {
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: id is required");
+            return false;
+        }
+
+        if (!notificationConfig.hasKey("icon")) {
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: icon is required");
+            return false;
+        }
+
+        if (!notificationConfig.hasKey("title")) {
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: title is reqired");
+            return false;
+        }
+
+        if (!notificationConfig.hasKey("text")) {
+            promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: text is required");
+            return false;
+        }
+
+        return true;
+    }
+
+
     private Class getMainActivityClass(Context context) {
         String packageName = context.getPackageName();
         Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
