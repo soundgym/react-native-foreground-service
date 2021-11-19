@@ -1,7 +1,7 @@
 //@ts-ignore
 import { AppRegistry, NativeModules } from "react-native";
 
-const ForegroundServiceModule = NativeModules.VIForegroundService;
+const ForegroundServiceModule = NativeModules.LTForegroundService;
 
 type Importance = 1 | 2 | 3 | 4 | 5;
 

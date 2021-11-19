@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const react_native_1 = require("react-native");
-const ForegroundServiceModule = react_native_1.NativeModules.VIForegroundService;
+const ForegroundServiceModule = react_native_1.NativeModules.LTForegroundService;
 let stopTask = (_) => { };
 const generateTask = (task, parameters) => {
     return async () => {
