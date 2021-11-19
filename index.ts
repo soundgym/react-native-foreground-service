@@ -149,7 +149,7 @@ const LTForegroundService: ILTForegroundService = {
   backgroundStartService: async (task, backgroundConfig) => {
     try {
       const finalTask = generateTask(task, backgroundConfig);
-      const taskName = backgroundConfig.taskName ?? "backgroundTask";
+      const taskName = "BackgroundTask";
       AppRegistry.registerHeadlessTask(taskName, () => finalTask);
       if (isRunning) {
         await ForegroundServiceModule.stopService();
