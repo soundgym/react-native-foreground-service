@@ -62,6 +62,7 @@ export interface IBackgroundConfig {
   icon: string;
   priority?: Priority;
   ongoing?: boolean;
+  taskName?: string;
 }
 
 export interface ILTForegroundService {
@@ -148,7 +149,8 @@ const LTForegroundService: ILTForegroundService = {
   backgroundStartService: async (task, backgroundConfig) => {
     try {
       const finalTask = generateTask(task, backgroundConfig);
-      AppRegistry.registerHeadlessTask(backgroundConfig.title, () => finalTask);
+      const taskName = backgroundConfig.taskName ?? "backgroundTask";
+      AppRegistry.registerHeadlessTask(taskName, () => finalTask);
       if (isRunning) {
         await ForegroundServiceModule.stopService();
       }

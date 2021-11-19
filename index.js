@@ -30,7 +30,8 @@ const LTForegroundService = {
     backgroundStartService: async (task, backgroundConfig) => {
         try {
             const finalTask = generateTask(task, backgroundConfig);
-            react_native_1.AppRegistry.registerHeadlessTask(backgroundConfig.title, () => finalTask);
+            const taskName = backgroundConfig.taskName ?? "backgroundTask";
+            react_native_1.AppRegistry.registerHeadlessTask(taskName, () => finalTask);
             if (isRunning) {
                 await ForegroundServiceModule.stopService();
             }

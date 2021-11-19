@@ -19,9 +19,9 @@ public class LTForegroundTask extends HeadlessJsTaskService {
     HeadlessJsTaskConfig getTaskConfig(Intent intent) {
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            String title = extras.getString("title");
+            String taskName = extras.getString("taskName");
             return new HeadlessJsTaskConfig(
-                    title,
+                    taskName,
                     Arguments.fromBundle(extras),
                     0, // timeout for the task
                     true // optional: defines whether or not  the task is allowed in foreground. Default is false
