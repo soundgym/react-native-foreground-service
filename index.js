@@ -1,7 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NotificationType = void 0;
 const react_native_1 = require("react-native");
 const ForegroundServiceModule = react_native_1.NativeModules.LTForegroundService;
+var NotificationType;
+(function (NotificationType) {
+    NotificationType["BACKGROUND"] = "BACKGROUND";
+    NotificationType["FOREGROUND"] = "FOREGROUND";
+})(NotificationType = exports.NotificationType || (exports.NotificationType = {}));
 let stopTask = (_) => { };
 let isRunning = false;
 const generateTask = (task, parameters) => {

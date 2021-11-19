@@ -24,6 +24,11 @@ class NotificationHelper {
     private static NotificationHelper instance = null;
     private NotificationManager mNotificationManager;
 
+    public enum NotificationType {
+        FOREGROUND,
+        BACKGROUND
+    }
+
     public static synchronized NotificationHelper getInstance(Context context) {
         if (instance == null) {
             instance = new NotificationHelper(context);
@@ -71,7 +76,7 @@ class NotificationHelper {
         }
     }
 
-    Notification buildNotification(Context context, Bundle notificationConfig) {
+    Notification buildNotification(Context context, Bundle notificationConfig,NotificationType notificationType) {
         if (notificationConfig == null) {
             Log.e("NotificationHelper", "buildNotification: invalid config");
             return null;
@@ -121,16 +126,29 @@ class NotificationHelper {
 
         }
 
+        notificationBuilder.setContentTitle(notificationConfig.getString("title"))
+                .setContentText(notificationConfig.getString("text"))
+                .setPriority(priority)
+                .setContentIntent(pendingIntent);
+
         Boolean ongoing = notificationConfig.getBoolean("ongoing");
         if (ongoing == null) {
             ongoing = false;
         }
 
-        notificationBuilder.setContentTitle(notificationConfig.getString("title"))
-                .setContentText(notificationConfig.getString("text"))
-                .setPriority(priority)
-                .setContentIntent(pendingIntent)
-                .setOngoing(ongoing);
+        if(ongoing) {
+            notificationBuilder.setOngoing(true);
+        }
+
+        if(NotificationType.BACKGROUND.equals(notificationType)) {
+            final PendingIntent contentIntent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            } else {
+                contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            }
+            notificationBuilder.setContentIntent(contentIntent);
+        }
 
         String iconName = notificationConfig.getString("icon");
         if (iconName != null) {

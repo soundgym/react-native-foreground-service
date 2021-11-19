@@ -1,5 +1,9 @@
 declare type Importance = 1 | 2 | 3 | 4 | 5;
 declare type Priority = 0 | -1 | -2 | 1 | 2;
+export declare enum NotificationType {
+    BACKGROUND = "BACKGROUND",
+    FOREGROUND = "FOREGROUND"
+}
 export interface IChannelConfig {
     id: string;
     name: string;
@@ -15,8 +19,10 @@ export interface INotificationConfig {
     icon: string;
     priority?: Priority;
     ongoing?: boolean;
+    notificationType?: NotificationType;
 }
 export interface IBackgroundConfig {
+    taskName?: string;
     delay?: number;
     channelId?: string;
     id: number;
@@ -25,7 +31,6 @@ export interface IBackgroundConfig {
     icon: string;
     priority?: Priority;
     ongoing?: boolean;
-    taskName?: string;
 }
 export interface ILTForegroundService {
     createNotificationChannel(channelConfig: IChannelConfig): Promise<void>;

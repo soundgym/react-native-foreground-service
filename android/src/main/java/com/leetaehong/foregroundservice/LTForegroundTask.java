@@ -1,7 +1,7 @@
 package com.leetaehong.foregroundservice;
 
 import static com.leetaehong.foregroundservice.Constants.BACKGROUND_CONFIG;
-
+import static com.leetaehong.foregroundservice.NotificationHelper.NotificationType;
 import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
@@ -46,7 +46,7 @@ public class LTForegroundTask extends HeadlessJsTaskService {
                 Bundle notificationConfig = intent.getExtras().getBundle(BACKGROUND_CONFIG);
                 if (notificationConfig != null && notificationConfig.containsKey("id")) {
                     Notification notification = NotificationHelper.getInstance(getApplicationContext())
-                            .buildNotification(getApplicationContext(), notificationConfig);
+                            .buildNotification(getApplicationContext(), notificationConfig,NotificationType.BACKGROUND);
 
                     startForeground((int)notificationConfig.getDouble("id"), notification);
                 }

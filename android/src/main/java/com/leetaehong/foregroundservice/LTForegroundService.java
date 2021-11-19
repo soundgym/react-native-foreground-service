@@ -9,6 +9,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+import com.leetaehong.foregroundservice.NotificationHelper.NotificationType;
 
 import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 
@@ -28,7 +29,7 @@ public class LTForegroundService extends Service {
                     Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
                     if (notificationConfig != null && notificationConfig.containsKey("id")) {
                         Notification notification = NotificationHelper.getInstance(getApplicationContext())
-                                .buildNotification(getApplicationContext(), notificationConfig);
+                                .buildNotification(getApplicationContext(), notificationConfig, NotificationType.FOREGROUND);
 
                         startForeground((int)notificationConfig.getDouble("id"), notification);
                     }

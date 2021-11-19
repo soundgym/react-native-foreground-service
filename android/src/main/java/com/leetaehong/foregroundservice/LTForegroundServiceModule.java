@@ -7,7 +7,7 @@ package com.leetaehong.foregroundservice;
 import android.app.Notification;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.os.Build;
+import com.leetaehong.foregroundservice.NotificationHelper.NotificationType;
 import android.os.Bundle;
 
 import com.facebook.react.bridge.Arguments;
@@ -82,7 +82,13 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         if(validResult) {
             Bundle updateBundle = Arguments.toBundle(notificationConfig);
             NotificationHelper mNotificationHelper = NotificationHelper.getInstance(this.reactContext);
-            Notification updateNotification = mNotificationHelper.buildNotification(this.reactContext, updateBundle);
+            NotificationType notificationType;
+            if(updateBundle.getString("notificationType") == "BACKGROUND") {
+                notificationType = NotificationType.BACKGROUND;
+            } else {
+                notificationType = NotificationType.FOREGROUND;
+            }
+            Notification updateNotification = mNotificationHelper.buildNotification(this.reactContext, updateBundle,notificationType);
             mNotificationHelper.updateNotification((int) updateBundle.getDouble("id"), updateNotification);
             if (updateNotification != null) {
                 promise.resolve(null);

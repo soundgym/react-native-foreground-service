@@ -7,6 +7,11 @@ type Importance = 1 | 2 | 3 | 4 | 5;
 
 type Priority = 0 | -1 | -2 | 1 | 2;
 
+export enum NotificationType {
+  BACKGROUND = "BACKGROUND",
+  FOREGROUND = "FOREGROUND",
+}
+
 /**
  * @property {string} id - Unique channel ID
  * @property {string} name - Notification channel name
@@ -33,6 +38,8 @@ export interface IChannelConfig {
  * @property {string} title - Notification title
  * @property {string} text - Notification text
  * @property {string} icon - Small icon name
+ * @property {boolean} ongoing - ongoing option true or false default : false
+ * @property {NotificationType} notificationType - BACKGROUND or FOREGROUND
  * @property {number} [priority] - Priority of this notification. One of:
  *                              0 - PRIORITY_DEFAULT (by default),
  *                              -1 - PRIORITY_LOW,
@@ -48,12 +55,26 @@ export interface INotificationConfig {
   icon: string;
   priority?: Priority;
   ongoing?: boolean;
+  notificationType?: NotificationType;
 }
 
 /**
  * @property {string} taskName - background Task Name
+ * @property {number} delay - background Task delay time
+ * @property {string} channelId - Notification channel id to display notification
+ * @property {number} id - Unique notification id
+ * @property {string} title - Notification title
+ * @property {string} text - Notification text
+ * @property {string} icon - Small icon name
+ * @property {number} [priority] - Priority of this notification. One of:
+ *                              0 - PRIORITY_DEFAULT (by default),
+ *                              -1 - PRIORITY_LOW,
+ *                              -2 - PRIORITY_MIN,
+ *                              1 - PRIORITY_HIGH,
+ *                              2- PRIORITY_MAX
  */
 export interface IBackgroundConfig {
+  taskName?: string;
   delay?: number;
   channelId?: string;
   id: number;
@@ -62,7 +83,6 @@ export interface IBackgroundConfig {
   icon: string;
   priority?: Priority;
   ongoing?: boolean;
-  taskName?: string;
 }
 
 export interface ILTForegroundService {
