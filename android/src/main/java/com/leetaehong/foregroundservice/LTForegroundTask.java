@@ -19,7 +19,8 @@ public class LTForegroundTask extends HeadlessJsTaskService {
     HeadlessJsTaskConfig getTaskConfig(Intent intent) {
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            String taskName = "BackgroundTask";
+            Bundle backgroundConfig = extras.getBundle(BACKGROUND_CONFIG);
+            String taskName = backgroundConfig.getString("taskName");
             return new HeadlessJsTaskConfig(
                     taskName,
                     Arguments.fromBundle(extras),
