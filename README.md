@@ -42,7 +42,7 @@ OR
 
 - React Native <= 0.59
 
-  `$ react-native link @voximplant/react-native-foreground-service`
+  `$ react-native link @leetaehong/react-native-foreground-service`
 
   1. Add the FOREGROUND_SERVICE permission to the application's `AndroidManifest.xml`:
      ```
@@ -60,12 +60,12 @@ OR
    - Add `new LTForegroundServicePackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
    ```
-   include ':@voximplant_react-native-foreground-service'
-   project(':@voximplant_react-native-foreground-service').projectDir = new File(rootProject.projectDir, '../node_modules/@voximplant/react-native-foreground-service/android')
+   include ':@leetaehong_react-native-foreground-service'
+   project(':@leetaehong_react-native-foreground-service').projectDir = new File(rootProject.projectDir, '../node_modules/@leetaehong/react-native-foreground-service/android')
    ```
 3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
    ```
-   implementation project(':@voximplant_react-native-foreground-service')
+   implementation project(':@leetaehong_react-native-foreground-service')
    ```
 4. Add the FOREGROUND_SERVICE permission to the application's `AndroidManifest.xml`:
    ```
