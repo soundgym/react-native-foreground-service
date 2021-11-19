@@ -83,6 +83,8 @@ export interface ILTForegroundService {
 
 let stopTask = (_: unknown) => {};
 
+let isRunning = false;
+
 const generateTask = (
   task: (taskData?: IBackgroundConfig) => Promise<void>,
   parameters: IBackgroundConfig
@@ -114,7 +116,8 @@ const LTForegroundService: ILTForegroundService = {
    * @return Promise
    */
   startService: async (notificationConfig) => {
-    return await ForegroundServiceModule.startService(notificationConfig);
+    await ForegroundServiceModule.startService(notificationConfig);
+    isRunning = true;
   },
 
   /**
@@ -123,7 +126,8 @@ const LTForegroundService: ILTForegroundService = {
    * @return Promise
    */
   stopService: async () => {
-    return await ForegroundServiceModule.stopService();
+    await ForegroundServiceModule.stopService();
+    isRunning = false;
   },
 
   /**
@@ -145,7 +149,9 @@ const LTForegroundService: ILTForegroundService = {
     try {
       const finalTask = generateTask(task, backgroundConfig);
       AppRegistry.registerHeadlessTask(backgroundConfig.title, () => finalTask);
-      await ForegroundServiceModule.stopService();
+      if (isRunning) {
+        await ForegroundServiceModule.stopService();
+      }
       await ForegroundServiceModule.backgroundStartService(backgroundConfig);
     } catch (err) {
       console.error("backgroundStartService error");

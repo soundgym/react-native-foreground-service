@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const react_native_1 = require("react-native");
 const ForegroundServiceModule = react_native_1.NativeModules.LTForegroundService;
 let stopTask = (_) => { };
+let isRunning = false;
 const generateTask = (task, parameters) => {
     return async () => {
         await new Promise((resolve) => {
@@ -16,10 +17,12 @@ const LTForegroundService = {
         return await ForegroundServiceModule.createNotificationChannel(channelConfig);
     },
     startService: async (notificationConfig) => {
-        return await ForegroundServiceModule.startService(notificationConfig);
+        await ForegroundServiceModule.startService(notificationConfig);
+        isRunning = true;
     },
     stopService: async () => {
-        return await ForegroundServiceModule.stopService();
+        await ForegroundServiceModule.stopService();
+        isRunning = false;
     },
     updateService: async (notificationConfig) => {
         await ForegroundServiceModule.updateService(notificationConfig);
@@ -28,7 +31,9 @@ const LTForegroundService = {
         try {
             const finalTask = generateTask(task, backgroundConfig);
             react_native_1.AppRegistry.registerHeadlessTask(backgroundConfig.title, () => finalTask);
-            await ForegroundServiceModule.stopService();
+            if (isRunning) {
+                await ForegroundServiceModule.stopService();
+            }
             await ForegroundServiceModule.backgroundStartService(backgroundConfig);
         }
         catch (err) {
