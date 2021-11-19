@@ -29,7 +29,7 @@ OR
      ```
   2. Add VIForegroundService as a service to the application's `AndroidManifest.xml`:
      ```
-     <service android:name="com.voximplant.foregroundservice.VIForegroundService"
+     <service android:name="com.leetaehong.foregroundservice.VIForegroundService"
      android:exported="true" <- If you want it to be maintained even after the app is turned off, default : "false"
      />
      ```
@@ -50,14 +50,14 @@ OR
      ```
   2. Add VIForegroundService as a service to the application's `AndroidManifest.xml`:
      ```
-     <service android:name="com.voximplant.foregroundservice.VIForegroundService"> </service>
+     <service android:name="com.leetaehong.foregroundservice.VIForegroundService"> </service>
      ```
 
 ### Manual installation (Android only, React Native <= 0.59)
 
 1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-   - Add `import com.voximplant.foregroundservice.VIForegroundServicePackage;` to the imports at the top of the file
-   - Add `new VIForegroundServicePackage()` to the list returned by the `getPackages()` method
+   - Add `import com.leetaehong.foregroundservice.LTForegroundServicePackage;` to the imports at the top of the file
+   - Add `new LTForegroundServicePackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
    ```
    include ':@voximplant_react-native-foreground-service'
@@ -73,7 +73,7 @@ OR
    ```
 5. Add VIForegroundService as a service to the application's `AndroidManifest.xml`:
    ```
-   <service android:name="com.voximplant.foregroundservice.VIForegroundService"> </service>
+   <service android:name="com.leetaehong.foregroundservice.VIForegroundService"> </service>
    ```
 
 ## Demo project
