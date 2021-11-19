@@ -135,11 +135,18 @@ const LTForegroundService: ILTForegroundService = {
    * @return void
    */
   backgroundStartService: async (task, backgroundConfig) => {
-    const finalTask = generateTask(task, backgroundConfig);
-    AppRegistry.registerHeadlessTask(
-      backgroundConfig.taskName,
-      () => finalTask
-    );
+    try {
+      const finalTask = generateTask(task, backgroundConfig);
+      console.log("backgroundStartService finalTask generated");
+      AppRegistry.registerHeadlessTask(
+        backgroundConfig.taskName,
+        () => finalTask
+      );
+      console.log("backgroundStartService registerHeadlessTask");
+    } catch (err) {
+      console.error("backgroundStartService error");
+      console.error(err);
+    }
   },
 };
 
