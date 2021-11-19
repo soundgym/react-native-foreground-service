@@ -43,14 +43,14 @@ public class LTForegroundTask extends HeadlessJsTaskService {
         }
         if (action != null) {
             if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_START)) {
-                Bundle notificationConfig = intent.getExtras().getBundle(BACKGROUND_CONFIG);
-                if (notificationConfig != null && notificationConfig.containsKey("id")) {
+                Bundle backgroundConfig = intent.getExtras().getBundle(BACKGROUND_CONFIG);
+                if (backgroundConfig != null && backgroundConfig.containsKey("id")) {
                     Notification notification = NotificationHelper.getInstance(getApplicationContext())
-                            .buildNotification(getApplicationContext(), notificationConfig,NotificationType.BACKGROUND);
+                            .buildNotification(getApplicationContext(), backgroundConfig,NotificationType.BACKGROUND);
 
-                    startForeground((int)notificationConfig.getDouble("id"), notification);
+                    startForeground((int)backgroundConfig.getDouble("id"), notification);
                 }
-            } else {
+            } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_STOP)) {
                 stopSelf();
             }
         }
