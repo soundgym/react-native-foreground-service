@@ -152,6 +152,34 @@ async startForegroundService() {
 LTForegroundService.stopService();
 ```
 
+### Start background foreground service
+
+```javascript
+async backgroundStartService() {
+    const backgroundConfig : IBackgroundConfig = {
+        channelId: 'channelId',
+        id: 3456,
+        title: 'Title',
+        text: 'Some text',
+        icon: 'ic_icon',
+        ongoing: true, // default false
+        taskName: "BackgroundTask",
+        delay: 1000
+    };
+    try {
+        await LTForegroundService.backgroundStartService(backgroundConfig);
+    } catch (e) {
+        console.error(e);
+    }
+}
+```
+
+### Stop background foreground service
+
+```javascript
+LTForegroundService.backgroundStopService();
+```
+
 ## Reference
 
 ### Methods
@@ -189,6 +217,20 @@ It is used to update the foreground service.
 
 - `NOTE` : When using the update function, the `channel ID` must be the same.
 
+---
+
+```javascript
+static async backgroundStartService(backgroundConfig)
+```
+
+It is used when you want a notification to run a task in the background.
+
+```javascript
+static async backgroundStopService()
+```
+
+This is used when you want to stop background task notifications.
+
 ### Configs
 
 ```javascript
@@ -216,5 +258,21 @@ NotificationConfig;
 | icon          | Icon name                                                                                                                                                                                                           | yes                   |
 | priority      | Priority of this notification. One of: <ul><li>&nbsp;0 – PRIORITY_DEFAULT (by default)</li><li>-1 – PRIORITY_LOW</li><li>-2 – PRIORITY_MIN</li><li>&nbsp;1 – PRIORITY_HIGH</li><li>&nbsp;2 – PRIORITY_MAX</li></ul> | no                    |
 | ongoing       | To keep the notification or prevent the user from erasing the notification even if the user shuts down the app,                                                                                                     | no                    |
+
+```javascript
+BackgroundConfig;
+```
+
+| Property name | Description                                                                                                                                                                                                         | Required              |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| channelId     | Notification channel id to display the notification                                                                                                                                                                 | yes (Android 8+ only) |
+| id            | Unique notification id                                                                                                                                                                                              | yes                   |
+| title         | Notification title                                                                                                                                                                                                  | yes                   |
+| text          | Notification text                                                                                                                                                                                                   | yes                   |
+| icon          | Icon name                                                                                                                                                                                                           | yes                   |
+| priority      | Priority of this notification. One of: <ul><li>&nbsp;0 – PRIORITY_DEFAULT (by default)</li><li>-1 – PRIORITY_LOW</li><li>-2 – PRIORITY_MIN</li><li>&nbsp;1 – PRIORITY_HIGH</li><li>&nbsp;2 – PRIORITY_MAX</li></ul> | no                    |
+| ongoing       | To keep the notification or prevent the user from erasing the notification even if the user shuts down the app,                                                                                                     | no                    |
+| delay         | Set the time to run the task regularly.                                                                                                                                                                             | no                    |
+| taskname      | Please enter the background task name.                                                                                                                                                                              | no                    |
 
 [libray-link]: https://github.com/voximplant/react-native-foreground-service
