@@ -39,6 +39,8 @@ export interface ILTForegroundService {
     updateService(notificationConfig: INotificationConfig): Promise<void>;
     backgroundStartService(task: (taskData?: IBackgroundConfig) => Promise<void>, backgroundConfig: IBackgroundConfig): Promise<void>;
     backgroundStopService(): Promise<void>;
+    getIsBackgroundRunning(): boolean;
+    getIsRunning(): boolean;
 }
 declare const LTForegroundService: ILTForegroundService;
 export default LTForegroundService;

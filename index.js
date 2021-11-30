@@ -10,6 +10,7 @@ var NotificationType;
 })(NotificationType = exports.NotificationType || (exports.NotificationType = {}));
 let stopTask = (_) => { };
 let isRunning = false;
+let isBackgroundRunning = false;
 const generateTask = (task, parameters) => {
     return async () => {
         await new Promise((resolve) => {
@@ -42,6 +43,7 @@ const LTForegroundService = {
                 await ForegroundServiceModule.stopService();
             }
             await ForegroundServiceModule.backgroundStartService(backgroundConfig);
+            isBackgroundRunning = true;
         }
         catch (err) {
             console.error("backgroundStartService error");
@@ -50,7 +52,15 @@ const LTForegroundService = {
     },
     backgroundStopService: async () => {
         await stopTask({});
-        return await ForegroundServiceModule.backgroundStopService();
+        await ForegroundServiceModule.backgroundStopService();
+        isBackgroundRunning = false;
+        return;
+    },
+    getIsBackgroundRunning: () => {
+        return isBackgroundRunning;
+    },
+    getIsRunning: () => {
+        return isRunning;
     },
 };
 exports.default = LTForegroundService;
