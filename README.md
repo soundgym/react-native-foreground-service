@@ -52,6 +52,10 @@ OR
      ```
      <service android:name="com.leetaehong.foregroundservice.LTForegroundService"> </service>
      ```
+  3. If you want to use the background service, you add LTForegroundTask as a service to the application's `AndroidManifest.xml`:
+     ```
+     <service android:name="com.leetaehong.foregroundservice.LTForegroundTask"/>
+     ```
 
 ### Manual installation (Android only, React Native <= 0.59)
 
@@ -74,6 +78,10 @@ OR
 5. Add LTForegroundService as a service to the application's `AndroidManifest.xml`:
    ```
    <service android:name="com.leetaehong.foregroundservice.LTForegroundService"> </service>
+   ```
+6. If you want to use the background service, you add LTForegroundTask as a service to the application's `AndroidManifest.xml`:
+   ```
+   <service android:name="com.leetaehong.foregroundservice.LTForegroundTask"/>
    ```
 
 ## Demo project
