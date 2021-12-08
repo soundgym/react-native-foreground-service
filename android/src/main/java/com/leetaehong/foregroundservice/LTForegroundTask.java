@@ -68,7 +68,7 @@ public class LTForegroundTask extends HeadlessJsTaskService {
             }
         }
         super.onStartCommand(intent, flags, startId);
-        return START_REDELIVER_INTENT;
+        return START_STICKY;
     }
 
 }
