@@ -166,8 +166,18 @@ async backgroundStartService() {
         taskName: "BackgroundTask",
         delay: 1000
     };
+
+    const exampleTask = async (taskDataArguments?: IBackgroundConfig) => {
+        await new Promise(() => {
+            while (ForegroundService.getIsBackgroundRunning()) {
+                // you can do anything
+                console.log("taskDataArguments")
+            }
+        });
+    };
+
     try {
-        await LTForegroundService.backgroundStartService(backgroundConfig);
+        await LTForegroundService.backgroundStartService(exampleTask,backgroundConfig);
     } catch (e) {
         console.error(e);
     }
