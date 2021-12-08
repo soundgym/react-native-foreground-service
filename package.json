@@ -1,6 +1,6 @@
 {
   "name": "react-native-foreground-service-android",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "React native module to start foreground service on android",
   "main": "index.js",
   "types": "index.d.ts",
@@ -24,7 +24,9 @@
     "service",
     "android",
     "ko-devHong",
-    "react-native-foreground"
+    "react-native-foreground",
+    "react-native-foreground-service",
+    "react-native-foreground-service-android"
   ],
   "author": "Lee tae hong. <hongdeveloper@gmail.com>",
   "license": "MIT",
