@@ -9,10 +9,19 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.HeadlessJsTaskService;
+import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.jstasks.HeadlessJsTaskConfig;
+import com.facebook.react.jstasks.HeadlessJsTaskContext;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LTForegroundTask extends HeadlessJsTaskService {
+
+    HeadlessJsTaskConfig headlessJsTaskConfig;
 
     @Override
     protected @Nullable
@@ -24,12 +33,13 @@ public class LTForegroundTask extends HeadlessJsTaskService {
             if(taskName == null) {
                 taskName = "BackgroundTask";
             }
-            return new HeadlessJsTaskConfig(
+            headlessJsTaskConfig =  new HeadlessJsTaskConfig(
                     taskName,
                     Arguments.fromBundle(extras),
                     0, // timeout for the task
                     true // optional: defines whether or not  the task is allowed in foreground. Default is false
             );
+            return headlessJsTaskConfig;
         }
         return null;
     }
@@ -60,4 +70,32 @@ public class LTForegroundTask extends HeadlessJsTaskService {
         super.onStartCommand(intent, flags, startId);
         return START_REDELIVER_INTENT;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.getReactNativeHost().hasInstance()) {
+            ReactInstanceManager reactInstanceManager = this.getReactNativeHost().getReactInstanceManager();
+            ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
+            if (reactContext != null) {
+                HeadlessJsTaskContext headlessJsTaskContext = HeadlessJsTaskContext.getInstance(reactContext);
+                headlessJsTaskContext.startTask(headlessJsTaskConfig);
+//                Map<String, Object> notificationConfig = new HashMap();
+//                notificationConfig.put("id",9600);
+//                notificationConfig.put("title","걸음수");
+//                notificationConfig.put("icon","ic_stat_ic_notification");
+//                notificationConfig.put("priority",-2);
+//                notificationConfig.put("ongoing",true);
+//                notificationConfig.put("notificationType",NotificationType.BACKGROUND);
+//                notificationConfig.put("text","(보)");
+//                notificationConfig.put("channelId","SoundgymForegroundServiceChannel");
+//                Bundle updateBundle = Arguments.toBundle((ReadableMap) notificationConfig);
+//                Notification updateNotification = NotificationHelper.getInstance(this.getApplicationContext()).buildNotification(this.getApplicationContext(),updateBundle,NotificationType.BACKGROUND);
+//                NotificationHelper.getInstance(this.getApplicationContext()).updateNotification((int)notificationConfig.get("id"),updateNotification);
+            }
+        }
+
+
+    }
+
 }
