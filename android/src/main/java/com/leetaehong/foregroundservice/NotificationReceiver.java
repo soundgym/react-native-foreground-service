@@ -25,7 +25,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         //                Map<String, Object> notificationConfig = new HashMap();
         Map<String, Object> backgroundConfig = new HashMap();
         backgroundConfig.put("id",9600);
-        backgroundConfig.put("title","걸음수");
+        backgroundConfig.put("title","걸음수!!!");
         backgroundConfig.put("icon","ic_stat_ic_notification");
         backgroundConfig.put("priority",-2);
         backgroundConfig.put("ongoing",true);
