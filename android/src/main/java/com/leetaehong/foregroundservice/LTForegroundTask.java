@@ -71,31 +71,4 @@ public class LTForegroundTask extends HeadlessJsTaskService {
         return START_REDELIVER_INTENT;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (this.getReactNativeHost().hasInstance()) {
-            ReactInstanceManager reactInstanceManager = this.getReactNativeHost().getReactInstanceManager();
-            ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
-            if (reactContext != null) {
-                HeadlessJsTaskContext headlessJsTaskContext = HeadlessJsTaskContext.getInstance(reactContext);
-                headlessJsTaskContext.startTask(headlessJsTaskConfig);
-//                Map<String, Object> notificationConfig = new HashMap();
-//                notificationConfig.put("id",9600);
-//                notificationConfig.put("title","걸음수");
-//                notificationConfig.put("icon","ic_stat_ic_notification");
-//                notificationConfig.put("priority",-2);
-//                notificationConfig.put("ongoing",true);
-//                notificationConfig.put("notificationType",NotificationType.BACKGROUND);
-//                notificationConfig.put("text","(보)");
-//                notificationConfig.put("channelId","SoundgymForegroundServiceChannel");
-//                Bundle updateBundle = Arguments.toBundle((ReadableMap) notificationConfig);
-//                Notification updateNotification = NotificationHelper.getInstance(this.getApplicationContext()).buildNotification(this.getApplicationContext(),updateBundle,NotificationType.BACKGROUND);
-//                NotificationHelper.getInstance(this.getApplicationContext()).updateNotification((int)notificationConfig.get("id"),updateNotification);
-            }
-        }
-
-
-    }
-
 }
