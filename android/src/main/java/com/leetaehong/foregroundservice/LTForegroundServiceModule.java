@@ -90,6 +90,7 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
             }
             Notification updateNotification = mNotificationHelper.buildNotification(this.reactContext, updateBundle,notificationType);
             mNotificationHelper.updateNotification((int) updateBundle.getDouble("id"), updateNotification);
+            mNotificationHelper.scheduleAlarm(this.reactContext);
             if (updateNotification != null) {
                 promise.resolve(null);
             } else {

@@ -17,6 +17,8 @@ import java.util.Map;
 
 public class NotificationReceiver extends BroadcastReceiver {
     private static final String TAG = "NotificationReceiver";
+    public static final int REQUEST_CODE = 12345;
+    public static final String ACTION = "com.leeteahong.foregroundservice.alarm";
     @Override
     public void onReceive(Context context, Intent intent) {
         // here to restart the service
