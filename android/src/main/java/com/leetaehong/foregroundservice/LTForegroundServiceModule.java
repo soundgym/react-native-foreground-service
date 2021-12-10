@@ -111,12 +111,6 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
             }
             Notification updateNotification = mNotificationHelper.buildNotification(this.reactContext, updateBundle,notificationType);
             mNotificationHelper.updateNotification((int) updateBundle.getDouble("id"), updateNotification);
-            // remote service update
-            Intent intent = new Intent(getReactApplicationContext(), LTForegroundService.class);
-            intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_UPDATE);
-            intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
-            getReactApplicationContext().startService(intent);
-            // remote service update end
             if (updateNotification != null) {
                 promise.resolve(null);
             } else {
@@ -136,7 +130,6 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
             intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_START);
             intent.putExtra(BACKGROUND_CONFIG, Arguments.toBundle(backgroundConfig));
             ComponentName componentName = getReactApplicationContext().startService(intent);
-            getReactApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
             if (componentName != null) {
                 promise.resolve(null);
             } else {
@@ -150,6 +143,58 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void backgroundStopService(Promise promise) {
         Intent intent = new Intent(getReactApplicationContext(), LTForegroundTask.class);
+        intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_STOP);
+        boolean stopped = getReactApplicationContext().stopService(intent);
+        if (stopped) {
+            promise.resolve(null);
+        } else {
+            promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service failed to stop");
+        }
+    }
+
+    @ReactMethod
+    public void startRemoteService(ReadableMap notificationConfig, Promise promise) {
+        Boolean validResult = NotificationHelper.getInstance(getReactApplicationContext()).validCheckNotificationConfig(notificationConfig, promise);
+
+        if (validResult) {
+            Intent intent = new Intent(getReactApplicationContext(), LTForegroundRemoteService.class);
+            intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_START);
+            intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
+            ComponentName componentName = getReactApplicationContext().startService(intent);
+            getReactApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+            if (componentName != null) {
+                promise.resolve(null);
+            } else {
+                promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service is not started");
+            }
+        } else {
+            promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service is not started");
+        }
+    }
+
+    @ReactMethod
+    public void updateRemoteService(ReadableMap notificationConfig, Promise promise) {
+        Boolean validResult = NotificationHelper.getInstance(getReactApplicationContext()).validCheckNotificationConfig(notificationConfig, promise);
+
+        if (validResult) {
+            Bundle updateBundle = Arguments.toBundle(notificationConfig);
+            Intent intent = new Intent(getReactApplicationContext(), LTForegroundRemoteService.class);
+            intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_UPDATE);
+            intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
+            getReactApplicationContext().startService(intent);
+            if (updateBundle != null) {
+                promise.resolve(null);
+            } else {
+                promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service is not started");
+            }
+        } else {
+            promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: Foreground service is not started");
+        }
+    }
+
+    @ReactMethod
+    public void stopRemoteService(Promise promise) {
+        Intent intent = new Intent(getReactApplicationContext(), LTForegroundRemoteService.class);
         intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_STOP);
         boolean stopped = getReactApplicationContext().stopService(intent);
         if (stopped) {

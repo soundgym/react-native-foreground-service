@@ -8,6 +8,7 @@ public class Constants {
     static final String ACTION_FOREGROUND_SERVICE_START = "com.leetaehong.foregroundservice.service_start";
     static final String ACTION_FOREGROUND_SERVICE_STOP = "com.leetaehong.foregroundservice.service_stop";
     static final String ACTION_FOREGROUND_SERVICE_UPDATE = "com.leetaehong.foregroundservice.service_update";
+    static final String ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE = "com.leetaehong.foregroundservice.service_remote_update";
 
     static final String NOTIFICATION_CONFIG = "com.leetaehong.foregroundservice.notif_config";
     static final String BACKGROUND_CONFIG = "com.leetaehong.foregroundservice.background_config";

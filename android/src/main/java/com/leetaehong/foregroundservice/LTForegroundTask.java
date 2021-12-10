@@ -33,18 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LTForegroundTask extends HeadlessJsTaskService {
-    private final String TAG = "RemoteService";
-    HeadlessJsTaskConfig headlessJsTaskConfig;
-
-    private ArrayList<Messenger> mClientCallbacks = new ArrayList();
-    final Messenger mMessenger = new Messenger(new CallbackHandler());
-    int mValue = 0;
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mMessenger.getBinder();
-    }
 
     @Override
     protected @Nullable
@@ -56,13 +44,12 @@ public class LTForegroundTask extends HeadlessJsTaskService {
             if(taskName == null) {
                 taskName = "BackgroundTask";
             }
-            headlessJsTaskConfig =  new HeadlessJsTaskConfig(
+            return  new HeadlessJsTaskConfig(
                     taskName,
                     Arguments.fromBundle(extras),
                     0, // timeout for the task
                     true // optional: defines whether or not  the task is allowed in foreground. Default is false
             );
-            return headlessJsTaskConfig;
         }
         return null;
     }
@@ -88,47 +75,10 @@ public class LTForegroundTask extends HeadlessJsTaskService {
                 }
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_STOP)) {
                 stopSelf();
-            } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_UPDATE)) {
-                Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
-                Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
-                        .buildNotification(getApplicationContext(), notificationConfig,NotificationType.BACKGROUND);
-                NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"),updateNotification);
             }
         }
 
         return super.onStartCommand(intent, flags, startId);
-    }
-
-    private class CallbackHandler  extends Handler {
-        @Override
-        public void handleMessage( Message msg ){
-            switch( msg.what ){
-                case MSG_CLIENT_CONNECT:
-                    Log.d(TAG, "Received MSG_CLIENT_CONNECT message from client");
-                    mClientCallbacks.add(msg.replyTo);
-                    break;
-                case MSG_CLIENT_DISCONNECT:
-                    Log.d(TAG, "Received MSG_CLIENT_DISCONNECT message from client");
-                    mClientCallbacks.remove(msg.replyTo);
-                    break;
-                case MSG_ADD_VALUE:
-                    Log.d(TAG, "Received message from client: MSG_ADD_VALUE");
-                    mValue += msg.arg1;
-                    for (int i = mClientCallbacks.size() - 1; i >= 0; i--) {
-                        try{
-                            Log.d(TAG, "Send MSG_ADDED_VALUE message to client");
-                            Message added_msg = Message.obtain(
-                                    null, MSG_ADD_VALUE);
-                            added_msg.arg1 = mValue;
-                            mClientCallbacks.get(i).send(added_msg);
-                        }
-                        catch(RemoteException e){
-                            mClientCallbacks.remove( i );
-                        }
-                    }
-                    break;
-            }
-        }
     }
 
 

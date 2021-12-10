@@ -101,6 +101,12 @@ export interface ILTForegroundService {
 
   backgroundStopService(): Promise<void>;
 
+  startRemoteService(notificationConfig: INotificationConfig): Promise<void>;
+
+  stopRemoteService(): Promise<void>;
+
+  updateRemoteService(notificationConfig: INotificationConfig): Promise<void>;
+
   getIsBackgroundRunning(): boolean;
   getIsRunning(): boolean;
 }
@@ -192,6 +198,35 @@ const LTForegroundService: ILTForegroundService = {
     await ForegroundServiceModule.backgroundStopService();
     isBackgroundRunning = false;
     return;
+  },
+
+  /**
+   * Start foreground service
+   * @param {INotificationConfig} notificationConfig - Notification config
+   * @return Promise
+   */
+  startRemoteService: async (notificationConfig) => {
+    await ForegroundServiceModule.startRemoteService(notificationConfig);
+    isRunning = true;
+  },
+
+  /**
+   * Stop foreground service
+   *
+   * @return Promise
+   */
+  stopRemoteService: async () => {
+    await ForegroundServiceModule.stopRemoteService();
+    isRunning = false;
+  },
+
+  /**
+   * Update foreground service
+   * @param {INotificationConfig} notificationConfig - Notification config
+   * @return void
+   */
+  updateRemoteService: async (notificationConfig) => {
+    await ForegroundServiceModule.updateRemoteService(notificationConfig);
   },
 
   getIsBackgroundRunning: () => {
