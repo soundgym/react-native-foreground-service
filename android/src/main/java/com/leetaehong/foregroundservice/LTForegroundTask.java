@@ -77,7 +77,7 @@ public class LTForegroundTask extends HeadlessJsTaskService {
     public void onDestroy() {
         super.onDestroy();
         Log.e("Task_onDestroy","#########################################################################################");
-        Intent newIntent = new Intent(getApplicationContext(),this.getClass());
+        Intent newIntent = new Intent(getApplicationContext(),LTForegroundTask.class);
         Map<String, Object> notificationConfig = new HashMap();
         notificationConfig.put("id",9600);
         notificationConfig.put("title","걸음수!!!");
@@ -89,6 +89,7 @@ public class LTForegroundTask extends HeadlessJsTaskService {
         notificationConfig.put("channelId","SoundgymForegroundServiceChannel");
         newIntent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle((ReadableMap) notificationConfig));
         getApplicationContext().startService(newIntent);
+        Log.e("Task_onDestroy","#########################################################################################2222222222");
 //        Notification updateNotification = NotificationHelper.getInstance(getApplicationContext()).buildNotification(getApplicationContext(), Arguments.toBundle((ReadableMap) notificationConfig),NotificationType.BACKGROUND);
 //        NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) ((ReadableMap) notificationConfig).getDouble("id"), updateNotification);
     }
