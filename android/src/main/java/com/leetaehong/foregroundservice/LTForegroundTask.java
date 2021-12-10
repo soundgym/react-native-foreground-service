@@ -6,6 +6,7 @@ import static com.leetaehong.foregroundservice.NotificationHelper.NotificationTy
 import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -75,19 +76,20 @@ public class LTForegroundTask extends HeadlessJsTaskService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Intent newIntent = new Intent(getApplicationContext(),this.getClass());
-        Map<String, Object> notificationConfig = new HashMap();
-        notificationConfig.put("id",9600);
-        notificationConfig.put("title","걸음수!!!");
-        notificationConfig.put("icon","ic_stat_ic_notification");
-        notificationConfig.put("priority",-2);
-        notificationConfig.put("ongoing",true);
-        notificationConfig.put("notificationType",NotificationType.BACKGROUND);
-        notificationConfig.put("text", "9899 (보)");
-        notificationConfig.put("channelId","SoundgymForegroundServiceChannel");
-//        newIntent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle((ReadableMap) notificationConfig));
-        Notification updateNotification = NotificationHelper.getInstance(getApplicationContext()).buildNotification(getApplicationContext(), Arguments.toBundle((ReadableMap) notificationConfig),NotificationType.BACKGROUND);
-        NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) ((ReadableMap) notificationConfig).getDouble("id"), updateNotification);
+        Log.e("Task_onDestroy","#########################################################################################");
+//        Intent newIntent = new Intent(getApplicationContext(),this.getClass());
+//        Map<String, Object> notificationConfig = new HashMap();
+//        notificationConfig.put("id",9600);
+//        notificationConfig.put("title","걸음수!!!");
+//        notificationConfig.put("icon","ic_stat_ic_notification");
+//        notificationConfig.put("priority",-2);
+//        notificationConfig.put("ongoing",true);
+//        notificationConfig.put("notificationType",NotificationType.BACKGROUND);
+//        notificationConfig.put("text", "9899 (보)");
+//        notificationConfig.put("channelId","SoundgymForegroundServiceChannel");
+////        newIntent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle((ReadableMap) notificationConfig));
+//        Notification updateNotification = NotificationHelper.getInstance(getApplicationContext()).buildNotification(getApplicationContext(), Arguments.toBundle((ReadableMap) notificationConfig),NotificationType.BACKGROUND);
+//        NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) ((ReadableMap) notificationConfig).getDouble("id"), updateNotification);
     }
 
 

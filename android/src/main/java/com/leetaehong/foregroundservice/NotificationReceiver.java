@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -24,6 +25,7 @@ public class NotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         // here to restart the service
+        Log.e(TAG,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         Intent newIntent = new Intent(context.getApplicationContext(), LTForegroundTask.class);
         newIntent.setAction(Constants.ACTION_FOREGROUND_SERVICE_START);
         Map<String, Object> notificationConfig = new HashMap();
