@@ -2,6 +2,8 @@ package com.leetaehong.foregroundservice;
 
 import static com.leetaehong.foregroundservice.Constants.BACKGROUND_CONFIG;
 import static com.leetaehong.foregroundservice.NotificationHelper.NotificationType;
+
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -34,11 +36,13 @@ public class NotificationReceiver extends BroadcastReceiver {
         backgroundConfig.put("notificationType",NotificationType.BACKGROUND);
         backgroundConfig.put("text", "9899 (보)");
         backgroundConfig.put("channelId","SoundgymForegroundServiceChannel");
-        newIntent.putExtra(BACKGROUND_CONFIG, Arguments.toBundle((ReadableMap) backgroundConfig));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(newIntent);
-        } else {
-            context.startService(newIntent);
-        }
+//        newIntent.putExtra(BACKGROUND_CONFIG, Arguments.toBundle((ReadableMap) backgroundConfig));
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            context.startForegroundService(newIntent);
+//        } else {
+//            context.startService(newIntent);
+//        }
+        Notification updateNotification = NotificationHelper.getInstance(context.getApplicationContext()).buildNotification(context.getApplicationContext(), Arguments.toBundle((ReadableMap) backgroundConfig),NotificationType.BACKGROUND);
+        NotificationHelper.getInstance(context.getApplicationContext()).updateNotification((int) ((ReadableMap) backgroundConfig).getDouble("id"), updateNotification);
     }
 }
