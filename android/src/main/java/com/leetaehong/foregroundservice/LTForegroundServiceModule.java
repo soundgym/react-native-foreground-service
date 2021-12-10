@@ -39,11 +39,12 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
     private final ReactApplicationContext reactContext;
 
     private Messenger mServiceCallback = null;
-    private Messenger mClientCallback = new Messenger(new CallbackHandler());
+    private Messenger mClientCallback = null;
 
     public LTForegroundServiceModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
+        mClientCallback = new Messenger(new CallbackHandler());
     }
 
     @Override
