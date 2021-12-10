@@ -53,6 +53,10 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         return "LTForegroundService";
     }
 
+    public Messenger getServiceCallback() {
+        return mServiceCallback;
+    }
+
     @ReactMethod
     public void createNotificationChannel(ReadableMap channelConfig, Promise promise) {
         if (channelConfig == null) {

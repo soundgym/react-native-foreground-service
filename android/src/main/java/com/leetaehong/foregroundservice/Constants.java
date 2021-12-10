@@ -20,4 +20,5 @@ class Constants {
     static final int MSG_CLIENT_DISCONNECT = 2;
     static final int MSG_ADD_VALUE = 3;
     static final int MSG_ADDED_VALUE = 4;
+    static final int MSG_APP_DESTROY = 5;
 }
