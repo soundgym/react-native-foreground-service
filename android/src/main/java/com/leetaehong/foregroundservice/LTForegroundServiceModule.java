@@ -107,6 +107,12 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
             }
             Notification updateNotification = mNotificationHelper.buildNotification(this.reactContext, updateBundle,notificationType);
             mNotificationHelper.updateNotification((int) updateBundle.getDouble("id"), updateNotification);
+            // remote service update
+            Intent intent = new Intent(getReactApplicationContext(), LTForegroundService.class);
+            intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_UPDATE);
+            intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
+            getReactApplicationContext().startService(intent);
+            // remote service update end
             if (updateNotification != null) {
                 promise.resolve(null);
             } else {

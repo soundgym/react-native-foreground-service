@@ -8,6 +8,7 @@ import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 import static com.leetaehong.foregroundservice.NotificationHelper.NotificationType;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,7 +36,7 @@ public class LTForegroundTask extends HeadlessJsTaskService {
     private final String TAG = "RemoteService";
     HeadlessJsTaskConfig headlessJsTaskConfig;
 
-    private ArrayList<Messenger> mClientCallbacks = new ArrayList<Messenger>();
+    private ArrayList<Messenger> mClientCallbacks = new ArrayList();
     final Messenger mMessenger = new Messenger(new CallbackHandler());
     int mValue = 0;
 
@@ -87,6 +88,11 @@ public class LTForegroundTask extends HeadlessJsTaskService {
                 }
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_STOP)) {
                 stopSelf();
+            } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_UPDATE)) {
+                Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
+                Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
+                        .buildNotification(getApplicationContext(), notificationConfig,NotificationType.BACKGROUND);
+                NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"),updateNotification);
             }
         }
 
