@@ -4,7 +4,7 @@
 
 package com.leetaehong.foregroundservice;
 
-class Constants {
+public class Constants {
     static final String ACTION_FOREGROUND_SERVICE_START = "com.leetaehong.foregroundservice.service_start";
     static final String ACTION_FOREGROUND_SERVICE_STOP = "com.leetaehong.foregroundservice.service_stop";
     static final String ACTION_FOREGROUND_SERVICE_UPDATE = "com.leetaehong.foregroundservice.service_update";
