@@ -16,4 +16,8 @@ class Constants {
     static final String ERROR_SERVICE_ERROR = "ERROR_SERVICE_ERROR";
     static final String ERROR_ANDROID_VERSION = "ERROR_ANDROID_VERSION";
 
+    static final int MSG_CLIENT_CONNECT = 1;
+    static final int MSG_CLIENT_DISCONNECT = 2;
+    static final int MSG_ADD_VALUE = 3;
+    static final int MSG_ADDED_VALUE = 4;
 }

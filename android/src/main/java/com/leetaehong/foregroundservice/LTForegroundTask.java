@@ -1,11 +1,20 @@
 package com.leetaehong.foregroundservice;
 
 import static com.leetaehong.foregroundservice.Constants.BACKGROUND_CONFIG;
+import static com.leetaehong.foregroundservice.Constants.MSG_ADD_VALUE;
+import static com.leetaehong.foregroundservice.Constants.MSG_CLIENT_CONNECT;
+import static com.leetaehong.foregroundservice.Constants.MSG_CLIENT_DISCONNECT;
 import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 import static com.leetaehong.foregroundservice.NotificationHelper.NotificationType;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -18,12 +27,23 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.jstasks.HeadlessJsTaskConfig;
 import com.facebook.react.jstasks.HeadlessJsTaskContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class LTForegroundTask extends HeadlessJsTaskService {
-
+    private final String TAG = "RemoteService";
     HeadlessJsTaskConfig headlessJsTaskConfig;
+
+    private ArrayList<Messenger> mClientCallbacks = new ArrayList<Messenger>();
+    final Messenger mMessenger = new Messenger(new CallbackHandler());
+    int mValue = 0;
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mMessenger.getBinder();
+    }
 
     @Override
     protected @Nullable
@@ -73,25 +93,36 @@ public class LTForegroundTask extends HeadlessJsTaskService {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.e("Task_onDestroy","#########################################################################################");
-        Intent newIntent = new Intent(getApplicationContext(),LTForegroundTask.class);
-        Map<String, Object> notificationConfig = new HashMap();
-        notificationConfig.put("id",9600);
-        notificationConfig.put("title","걸음수!!!");
-        notificationConfig.put("icon","ic_stat_ic_notification");
-        notificationConfig.put("priority",-2);
-        notificationConfig.put("ongoing",true);
-        notificationConfig.put("notificationType",NotificationType.BACKGROUND);
-        notificationConfig.put("text", "9899 (보)");
-        notificationConfig.put("channelId","SoundgymForegroundServiceChannel");
-        newIntent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle((ReadableMap) notificationConfig));
-        getApplicationContext().startService(newIntent);
-        Log.e("Task_onDestroy","#########################################################################################2222222222");
-//        Notification updateNotification = NotificationHelper.getInstance(getApplicationContext()).buildNotification(getApplicationContext(), Arguments.toBundle((ReadableMap) notificationConfig),NotificationType.BACKGROUND);
-//        NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) ((ReadableMap) notificationConfig).getDouble("id"), updateNotification);
+    private class CallbackHandler  extends Handler {
+        @Override
+        public void handleMessage( Message msg ){
+            switch( msg.what ){
+                case MSG_CLIENT_CONNECT:
+                    Log.d(TAG, "Received MSG_CLIENT_CONNECT message from client");
+                    mClientCallbacks.add(msg.replyTo);
+                    break;
+                case MSG_CLIENT_DISCONNECT:
+                    Log.d(TAG, "Received MSG_CLIENT_DISCONNECT message from client");
+                    mClientCallbacks.remove(msg.replyTo);
+                    break;
+                case MSG_ADD_VALUE:
+                    Log.d(TAG, "Received message from client: MSG_ADD_VALUE");
+                    mValue += msg.arg1;
+                    for (int i = mClientCallbacks.size() - 1; i >= 0; i--) {
+                        try{
+                            Log.d(TAG, "Send MSG_ADDED_VALUE message to client");
+                            Message added_msg = Message.obtain(
+                                    null, MSG_ADD_VALUE);
+                            added_msg.arg1 = mValue;
+                            mClientCallbacks.get(i).send(added_msg);
+                        }
+                        catch(RemoteException e){
+                            mClientCallbacks.remove( i );
+                        }
+                    }
+                    break;
+            }
+        }
     }
 
 
