@@ -14,6 +14,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
@@ -44,7 +45,7 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
     public LTForegroundServiceModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
-        mClientCallback = new Messenger(new CallbackHandler());
+        mClientCallback = new Messenger(new CallbackHandler(Looper.getMainLooper()));
     }
 
     @Override
@@ -175,6 +176,11 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
 
     private class CallbackHandler extends Handler
     {
+
+        public CallbackHandler(Looper looper) {
+            super(looper);
+        }
+
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
