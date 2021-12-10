@@ -20,11 +20,14 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.facebook.react.bridge.Arguments;
+
 
 public class LTSensorListner implements SensorEventListener {
     private final String TAG = "LTSensorListner";
     private SensorManager mSensorManager;
     private Sensor mStepCounter;
+    private Context mContext;
 
     private Messenger mServiceCallback = null;
     private Messenger mClientCallback = null;
@@ -36,6 +39,7 @@ public class LTSensorListner implements SensorEventListener {
     public LTSensorListner(Context context) {
         mSensorManager = (SensorManager) context.getSystemService(context.SENSOR_SERVICE);
         mClientCallback = new Messenger(new CallbackHandler(Looper.getMainLooper()));
+        mContext = context;
 
     }
 
@@ -85,6 +89,9 @@ public class LTSensorListner implements SensorEventListener {
             connect_msg.replyTo = mClientCallback;
             try {
                 mServiceCallback.send(connect_msg);
+                Intent intent = new Intent(mContext.getApplicationContext(), LTForegroundRemoteService.class);
+                intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE);
+                mContext.getApplicationContext().startService(intent);
                 Log.d(TAG, "Send MSG_CLIENT_CONNECT message to Service");
             } catch (RemoteException e) {
                 e.printStackTrace();
