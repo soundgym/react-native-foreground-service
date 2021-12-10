@@ -25,25 +25,25 @@ public class NotificationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         // here to restart the service
-        Log.e(TAG,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        Intent newIntent = new Intent(context.getApplicationContext(), LTForegroundTask.class);
-        newIntent.setAction(Constants.ACTION_FOREGROUND_SERVICE_START);
-        Map<String, Object> notificationConfig = new HashMap();
-        Map<String, Object> backgroundConfig = new HashMap();
-        backgroundConfig.put("id",9600);
-        backgroundConfig.put("title","걸음수!!!");
-        backgroundConfig.put("icon","ic_stat_ic_notification");
-        backgroundConfig.put("priority",-2);
-        backgroundConfig.put("ongoing",true);
-        backgroundConfig.put("notificationType",NotificationType.BACKGROUND);
-        backgroundConfig.put("text", "9899 (보)");
-        backgroundConfig.put("channelId","SoundgymForegroundServiceChannel");
-        newIntent.putExtra(BACKGROUND_CONFIG, Arguments.toBundle((ReadableMap) backgroundConfig));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(newIntent);
-        } else {
-            context.startService(newIntent);
-        }
+        Log.e(TAG,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%@@");
+//        Intent newIntent = new Intent(context.getApplicationContext(), LTForegroundTask.class);
+//        newIntent.setAction(Constants.ACTION_FOREGROUND_SERVICE_START);
+//        Map<String, Object> notificationConfig = new HashMap();
+//        Map<String, Object> backgroundConfig = new HashMap();
+//        backgroundConfig.put("id",9600);
+//        backgroundConfig.put("title","걸음수!!!");
+//        backgroundConfig.put("icon","ic_stat_ic_notification");
+//        backgroundConfig.put("priority",-2);
+//        backgroundConfig.put("ongoing",true);
+//        backgroundConfig.put("notificationType",NotificationType.BACKGROUND);
+//        backgroundConfig.put("text", "9899 (보)");
+//        backgroundConfig.put("channelId","SoundgymForegroundServiceChannel");
+//        newIntent.putExtra(BACKGROUND_CONFIG, Arguments.toBundle((ReadableMap) backgroundConfig));
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            context.startForegroundService(newIntent);
+//        } else {
+//            context.startService(newIntent);
+//        }
 //        Notification updateNotification = NotificationHelper.getInstance(context.getApplicationContext()).buildNotification(context.getApplicationContext(), Arguments.toBundle((ReadableMap) backgroundConfig),NotificationType.BACKGROUND);
 //        NotificationHelper.getInstance(context.getApplicationContext()).updateNotification((int) ((ReadableMap) backgroundConfig).getDouble("id"), updateNotification);
     }
