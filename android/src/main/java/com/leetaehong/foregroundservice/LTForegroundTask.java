@@ -1,6 +1,7 @@
 package com.leetaehong.foregroundservice;
 
 import static com.leetaehong.foregroundservice.Constants.BACKGROUND_CONFIG;
+import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 import static com.leetaehong.foregroundservice.NotificationHelper.NotificationType;
 import android.app.Notification;
 import android.content.Intent;
@@ -28,8 +29,8 @@ public class LTForegroundTask extends HeadlessJsTaskService {
     HeadlessJsTaskConfig getTaskConfig(Intent intent) {
         Bundle extras = intent.getExtras();
         if (extras != null) {
-            Bundle backgroundConfig = extras.getBundle(BACKGROUND_CONFIG);
-            String taskName = backgroundConfig.getString("taskName");
+            Bundle notificationConfig = extras.getBundle(BACKGROUND_CONFIG);
+            String taskName = notificationConfig.getString("taskName");
             if(taskName == null) {
                 taskName = "BackgroundTask";
             }
@@ -53,22 +54,41 @@ public class LTForegroundTask extends HeadlessJsTaskService {
         }
         if (action != null) {
             if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_START)) {
-                Bundle backgroundConfig = intent.getExtras().getBundle(BACKGROUND_CONFIG);
-                if (backgroundConfig != null && backgroundConfig.containsKey("id")) {
+                Bundle notificationConfig = intent.getExtras().getBundle(BACKGROUND_CONFIG);
+                if (notificationConfig != null && notificationConfig.containsKey("id")) {
                     Notification notification = NotificationHelper.getInstance(getApplicationContext())
-                            .buildNotification(getApplicationContext(), backgroundConfig,NotificationType.BACKGROUND);
-                    if(backgroundConfig.getBoolean("ongoing")) {
+                            .buildNotification(getApplicationContext(), notificationConfig,NotificationType.BACKGROUND);
+                    if(notificationConfig.getBoolean("ongoing")) {
                         notification.flags |= Notification.FLAG_ONGOING_EVENT;
                         notification.flags |= Notification.FLAG_SHOW_LIGHTS;
                     }
-                    startForeground((int)backgroundConfig.getDouble("id"), notification);
+                    startForeground((int)notificationConfig.getDouble("id"), notification);
                 }
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_STOP)) {
                 stopSelf();
             }
         }
-
-        return super.onStartCommand(intent, flags, startId);
+        super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Intent newIntent = new Intent(getApplicationContext(),this.getClass());
+        Map<String, Object> notificationConfig = new HashMap();
+        notificationConfig.put("id",9600);
+        notificationConfig.put("title","걸음수!!!");
+        notificationConfig.put("icon","ic_stat_ic_notification");
+        notificationConfig.put("priority",-2);
+        notificationConfig.put("ongoing",true);
+        notificationConfig.put("notificationType",NotificationType.BACKGROUND);
+        notificationConfig.put("text", "9899 (보)");
+        notificationConfig.put("channelId","SoundgymForegroundServiceChannel");
+//        newIntent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle((ReadableMap) notificationConfig));
+        Notification updateNotification = NotificationHelper.getInstance(getApplicationContext()).buildNotification(getApplicationContext(), Arguments.toBundle((ReadableMap) notificationConfig),NotificationType.BACKGROUND);
+        NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) ((ReadableMap) notificationConfig).getDouble("id"), updateNotification);
+    }
+
 
 }
