@@ -61,7 +61,7 @@ public class LTForegroundRemoteService extends Service {
                 NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"),updateNotification);
             } else if(action.equals(Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE)) {
                 String stepText = prevBundle.getString("text");
-                stepText = stepText.replaceAll("\\d", "");  // or you can also use [0-9]
+                stepText = stepText.replaceAll("[^0-9]","");  // or you can also use [0-9]
                 int step = Integer.parseInt(stepText);
                 prevBundle.remove("text");
                 prevBundle.putString("text",(step + 1)  + " (보)");
