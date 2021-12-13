@@ -113,12 +113,15 @@ public class LTForegroundRemoteService extends Service {
 
     private void saveBundle(Bundle bundle) {
         sharedPref  = getSharedPreferences("AsyncStorage", Context.MODE_PRIVATE);
+        Log.e(TAG,"@@@@@@@@@@@@ saveBundle");
+        Log.e(TAG,bundle.toString());
         sharedPref.edit().putString("prevForegroundBundle",bundle.toString());
     }
 
     private void getBundle() {
         sharedPref  = getSharedPreferences("AsyncStorage", Context.MODE_PRIVATE);
         String bundleString = sharedPref.getString("prevForegroundBundle","");
+        Log.e(TAG,"@@@@@@@@@@@@ getBundle");
         Log.e(TAG,bundleString);
     }
 
