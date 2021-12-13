@@ -42,7 +42,7 @@ public class LTForegroundRemoteService extends Service {
     // Create URL
     private URL soundgymAPI;
 
-    private ArrayList<Messenger> mClientCallbacks = new ArrayList();
+    private ArrayList<Messenger> mClientCallbacks = new ArrayList<>();
     final Messenger mMessenger = new Messenger(new CallbackHandler());
 
     @Override
@@ -54,44 +54,58 @@ public class LTForegroundRemoteService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         if (action != null) {
-            if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_START)) {
-                if (intent.getExtras() != null && intent.getExtras().containsKey(NOTIFICATION_CONFIG)) {
-                    Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
-                    if (notificationConfig != null && notificationConfig.containsKey("id")) {
-                        Notification notification = NotificationHelper.getInstance(getApplicationContext())
-                                .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.FOREGROUND);
-                        if (notificationConfig.getBoolean("ongoing")) {
-                            notification.flags |= Notification.FLAG_ONGOING_EVENT;
-                            notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+            switch(action){
+                case Constants.ACTION_FOREGROUND_SERVICE_START :
+                    if (intent.getExtras() != null && intent.getExtras().containsKey(NOTIFICATION_CONFIG)) {
+                        Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
+                        if (notificationConfig != null && notificationConfig.containsKey("id")) {
+                            Notification notification = NotificationHelper.getInstance(getApplicationContext())
+                                    .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.FOREGROUND);
+                            if (notificationConfig.getBoolean("ongoing")) {
+                                notification.flags |= Notification.FLAG_ONGOING_EVENT;
+                                notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+                            }
+                            startForeground((int) notificationConfig.getDouble("id"), notification);
+                            userId = notificationConfig.getString("uid");
+                            userToken = notificationConfig.getString("userToken");
+                            changeStepCount(notificationConfig,true);
+                            callScheduleApi();
                         }
-                        startForeground((int) notificationConfig.getDouble("id"), notification);
-                        userId = notificationConfig.getString("uid");
-                        userToken = notificationConfig.getString("userToken");
-                        changeStepCount(notificationConfig,true);
-                        callScheduleApi();
                     }
-                }
-            } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_STOP)) {
-                stopSelf();
-            } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_UPDATE)) {
-                Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
-                // 최근 데이터 저장
-                prevBundle = notificationConfig;
-                changeStepCount(notificationConfig,false);
-                Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
-                        .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.BACKGROUND);
-                NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"), updateNotification);
-            } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE)) {
-                changeStepCount(prevBundle,false);
-                prevBundle.remove("text");
-                prevBundle.putString("text", currentStep + " (보)");
-                Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
-                        .buildNotification(getApplicationContext(), prevBundle, NotificationHelper.NotificationType.BACKGROUND);
-                NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) prevBundle.getDouble("id"), updateNotification);
+                    break;
+                case Constants.ACTION_FOREGROUND_SERVICE_STOP :
+                    stopSelf();
+                    break;
+                case Constants.ACTION_FOREGROUND_SERVICE_UPDATE :
+                    Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
+                    // 최근 데이터 저장
+                    prevBundle = notificationConfig;
+                    changeStepCount(notificationConfig,false);
+                    Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
+                            .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.BACKGROUND);
+                    NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"), updateNotification);
+                    break;
+                case Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE :
+                    changeStepCount(prevBundle,false);
+                    prevBundle.remove("text");
+                    prevBundle.putString("text", currentStep + " (보)");
+                    Notification updateNotificationTwo = NotificationHelper.getInstance(getApplicationContext())
+                            .buildNotification(getApplicationContext(), prevBundle, NotificationHelper.NotificationType.BACKGROUND);
+                    NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) prevBundle.getDouble("id"), updateNotificationTwo);
+                    break;
+                default:
+                    break;
             }
         }
         return START_REDELIVER_INTENT;
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        callScheduleApi();
+    }
+
 
 
     private class CallbackHandler extends Handler {
@@ -148,7 +162,7 @@ public class LTForegroundRemoteService extends Service {
                 Thread.sleep(delay);
                 runnable.run();
             } catch (Exception e) {
-                System.err.println(e);
+                e.printStackTrace();
             }
         }).start();
     }
@@ -195,10 +209,9 @@ public class LTForegroundRemoteService extends Service {
                     }
                 }
             } catch (MalformedURLException e) {
-                System.err.println(e);
+                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-                System.err.println(e);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
