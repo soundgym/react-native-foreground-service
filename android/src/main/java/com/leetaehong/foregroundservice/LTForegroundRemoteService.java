@@ -33,7 +33,7 @@ public class LTForegroundRemoteService extends Service {
 
     //이전 운동데이터 저장
     private Bundle prevBundle;
-    private int currentStep;
+    private int currentStep = 0;
     //유저정보
     private String userId;
     private String userToken;
@@ -73,9 +73,14 @@ public class LTForegroundRemoteService extends Service {
                 Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
                 // 최근 데이터 저장
                 prevBundle = notificationConfig;
+                String stepText = prevBundle.getString("text");
+                stepText = stepText.replaceAll("[^0-9]", "");  // or you can also use [0-9]
+                int step = Integer.parseInt(stepText);
+                currentStep = step + 1;
                 Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
                         .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.BACKGROUND);
                 NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"), updateNotification);
+                callScheduleApi();
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE)) {
                 String stepText = prevBundle.getString("text");
                 stepText = stepText.replaceAll("[^0-9]", "");  // or you can also use [0-9]
@@ -173,7 +178,7 @@ public class LTForegroundRemoteService extends Service {
                     soundgymConnection.disconnect();
                     if (response == 200) {
                         Log.d(TAG, responseMessage);
-                        setTimeout(() -> callScheduleApi(), 60000 * 20);
+//                        setTimeout(() -> callScheduleApi(), 60000 * 20);
                     }
                 } catch (MalformedURLException e) {
                     System.err.println(e);
