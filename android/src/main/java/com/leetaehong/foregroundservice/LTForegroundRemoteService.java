@@ -48,6 +48,10 @@ public class LTForegroundRemoteService extends Service {
                             notification.flags |= Notification.FLAG_SHOW_LIGHTS;
                         }
                         startForeground((int)notificationConfig.getDouble("id"), notification);
+                        Log.d(TAG,"################### user info");
+                        Log.d(TAG,notificationConfig.getString("uid"));
+                        Log.d(TAG,notificationConfig.getString("userToken"));
+                        Log.d(TAG,"################### user info");
                     }
                 }
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_STOP)) {
