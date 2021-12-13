@@ -155,14 +155,16 @@ public class LTForegroundRemoteService extends Service {
                     // Create connection
                     HttpsURLConnection soundgymConnection =
                             (HttpsURLConnection) soundgymAPI.openConnection();
+                    // 요청방식 선택
+                    soundgymConnection.setRequestMethod("POST");
                     //헤더옵션 추가
                     soundgymConnection.setRequestProperty("Authorization", userToken);
+                    soundgymConnection.setRequestProperty("Content-Type", "application/json");
+                    soundgymConnection.setRequestProperty("Accept", "application/json");
                     // InputStream으로 서버로 부터 응답을 받겠다는 옵션
                     soundgymConnection.setDoInput(true);
                     // OutputStream으로 Post 데이터를 넘겨주겠다는 옵션
                     soundgymConnection.setDoOutput(true);
-                    // 요청방식 선택
-                    soundgymConnection.setRequestMethod("POST");
                     // 서버로 전달할 Json객체 생성
                     JSONObject json = new JSONObject();
                     json.put("stepCount", currentStep);
@@ -175,7 +177,6 @@ public class LTForegroundRemoteService extends Service {
 
                     Log.d(TAG,"@@@@@@@@@@@@@@@@@@ api info @@@@@@@@@@@@@@");
                     Log.d(TAG,soundgymConnection.getHeaderFields().toString());
-                    Log.d(TAG,soundgymConnection.getRequestProperties().toString());
                     // 실제 서버로 Request 요청 하는 부분 (응답 코드를 받음, 200은 성공, 나머지 에러)
                     int response = soundgymConnection.getResponseCode();
                     String responseMessage = soundgymConnection.getResponseMessage();
