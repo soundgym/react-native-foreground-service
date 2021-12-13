@@ -8,11 +8,10 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 
 public class LTSensorListner implements SensorEventListener {
-    private final String TAG = "LTSensorListner";
+//    private final String TAG = "LTSensorListner";
     private SensorManager mSensorManager;
     private Sensor mStepCounter;
     private Context mContext;
@@ -24,7 +23,6 @@ public class LTSensorListner implements SensorEventListener {
     public LTSensorListner(Context context,Bundle bundle) {
         mSensorManager = (SensorManager) context.getSystemService(context.SENSOR_SERVICE);
         mContext = context;
-        Log.e(TAG,bundle.toString());
     }
 
     public int start(int delay) {

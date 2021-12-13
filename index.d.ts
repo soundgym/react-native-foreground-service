@@ -31,6 +31,8 @@ export interface IBackgroundConfig {
     icon: string;
     priority?: Priority;
     ongoing?: boolean;
+    uid?: string;
+    userToken?: string;
 }
 export interface ILTForegroundService {
     createNotificationChannel(channelConfig: IChannelConfig): Promise<void>;
