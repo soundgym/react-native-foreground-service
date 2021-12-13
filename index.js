@@ -56,6 +56,17 @@ const LTForegroundService = {
         isBackgroundRunning = false;
         return;
     },
+    startRemoteService: async (notificationConfig) => {
+        await ForegroundServiceModule.startRemoteService(notificationConfig);
+        isRunning = true;
+    },
+    stopRemoteService: async () => {
+        await ForegroundServiceModule.stopRemoteService();
+        isRunning = false;
+    },
+    updateRemoteService: async (notificationConfig) => {
+        await ForegroundServiceModule.updateRemoteService(notificationConfig);
+    },
     getIsBackgroundRunning: () => {
         return isBackgroundRunning;
     },
