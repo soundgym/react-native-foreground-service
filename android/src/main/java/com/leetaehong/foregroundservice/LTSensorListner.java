@@ -12,6 +12,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -65,8 +66,13 @@ public class LTSensorListner implements SensorEventListener {
             long curTime = System.currentTimeMillis();
             if ((curTime - lastUpdate) > delay) {
                 int stepCount = (int)sensorEvent.values[0];
-
-
+                Intent intent = new Intent(mContext.getApplicationContext(), LTForegroundRemoteService.class);
+                intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_UPDATE);
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    mContext.startForegroundService(intent);
+                } else {
+                    mContext.startService(intent);
+                }
                 lastUpdate = curTime;
             }
         }
