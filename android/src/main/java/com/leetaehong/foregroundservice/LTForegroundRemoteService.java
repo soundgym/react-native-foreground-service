@@ -172,6 +172,10 @@ public class LTForegroundRemoteService extends Service {
                     outputStream = soundgymConnection.getOutputStream();
                     outputStream.write(json.toString().getBytes());
                     outputStream.flush();
+
+                    Log.d(TAG,"@@@@@@@@@@@@@@@@@@ api info @@@@@@@@@@@@@@");
+                    Log.d(TAG,soundgymConnection.getHeaderFields().toString());
+                    Log.d(TAG,soundgymConnection.getRequestProperties().toString());
                     // 실제 서버로 Request 요청 하는 부분 (응답 코드를 받음, 200은 성공, 나머지 에러)
                     int response = soundgymConnection.getResponseCode();
                     String responseMessage = soundgymConnection.getResponseMessage();
