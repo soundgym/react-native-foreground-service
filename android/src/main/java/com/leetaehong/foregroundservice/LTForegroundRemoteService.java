@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 public class LTForegroundRemoteService extends Service {
     private final String TAG = "RemoteService";
-
+    private Bundle prevBundle;
     private ArrayList<Messenger> mClientCallbacks = new ArrayList();
     final Messenger mMessenger = new Messenger(new CallbackHandler());
     SharedPreferences sharedPref;
@@ -56,6 +56,7 @@ public class LTForegroundRemoteService extends Service {
                 Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
                 // 최근 데이터 저장
                 saveBundle(notificationConfig);
+                prevBundle = notificationConfig;
                 Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
                         .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.BACKGROUND);
                 NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"),updateNotification);
@@ -104,7 +105,7 @@ public class LTForegroundRemoteService extends Service {
                     break;
                 case MSG_APP_DESTROY:
                     Log.d(TAG, "Received MSG_APP_DESTROY message from client");
-                    LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext());
+                    LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext(),prevBundle);
                     ltSensorListner.start(1000);
                     break;
             }

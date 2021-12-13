@@ -35,9 +35,10 @@ public class LTSensorListner implements SensorEventListener {
     private int delay;
 
 
-    public LTSensorListner(Context context) {
+    public LTSensorListner(Context context,Bundle bundle) {
         mSensorManager = (SensorManager) context.getSystemService(context.SENSOR_SERVICE);
         mContext = context;
+        Log.e(TAG,bundle.toString());
     }
 
     public int start(int delay) {
