@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -34,6 +35,7 @@ public class LTForegroundRemoteService extends Service {
     //이전 운동데이터 저장
     private Bundle prevBundle;
     private int currentStep = 0;
+    private int sendStep = 0;
     //유저정보
     private String userId;
     private String userToken;
@@ -65,6 +67,7 @@ public class LTForegroundRemoteService extends Service {
                         startForeground((int) notificationConfig.getDouble("id"), notification);
                         userId = notificationConfig.getString("uid");
                         userToken = notificationConfig.getString("userToken");
+                        changeStepCount(notificationConfig,true);
                         callScheduleApi();
                     }
                 }
@@ -74,12 +77,12 @@ public class LTForegroundRemoteService extends Service {
                 Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
                 // 최근 데이터 저장
                 prevBundle = notificationConfig;
-                changeStepCount(notificationConfig);
+                changeStepCount(notificationConfig,null);
                 Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
                         .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.BACKGROUND);
                 NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"), updateNotification);
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE)) {
-                changeStepCount(prevBundle);
+                changeStepCount(prevBundle,null);
                 prevBundle.remove("text");
                 prevBundle.putString("text", currentStep + " (보)");
                 Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
@@ -127,11 +130,14 @@ public class LTForegroundRemoteService extends Service {
         }
     }
 
-    private int changeStepCount(Bundle bundle) {
+    private int changeStepCount(Bundle bundle, Boolean isFirst) {
         String stepText = bundle.getString("text");
         stepText = stepText.replaceAll("[^0-9]", "");  // or you can also use [0-9]
         int step = Integer.parseInt(stepText);
         currentStep = step + 1;
+        if(isFirst) {
+            sendStep = step + 1;
+        }
         return currentStep;
     }
 
@@ -152,37 +158,41 @@ public class LTForegroundRemoteService extends Service {
             // All your networking logic
             // should be here
             try {
-                soundgymAPI = new URL("https://api.dev.soundgym.kr/app/user/health/steps");
-                // Create connection
-                HttpsURLConnection soundgymConnection =
-                        (HttpsURLConnection) soundgymAPI.openConnection();
-                // 요청방식 선택
-                soundgymConnection.setRequestMethod("POST");
-                //헤더옵션 추가
-                soundgymConnection.setRequestProperty("Authorization", userToken);
-                soundgymConnection.setRequestProperty("Content-Type", "application/json");
-                soundgymConnection.setRequestProperty("Accept", "application/json");
-                // InputStream으로 서버로 부터 응답을 받겠다는 옵션
-                soundgymConnection.setDoInput(true);
-                // OutputStream으로 Post 데이터를 넘겨주겠다는 옵션
-                soundgymConnection.setDoOutput(true);
-                // 서버로 전달할 Json객체 생성
-                JSONObject json = new JSONObject();
-                json.put("stepCount", currentStep);
-                json.put("registeredAt", System.currentTimeMillis());
-                // Request Body에 데이터를 담기위한 OutputStream 객체 생성
-                OutputStream outputStream;
-                outputStream = soundgymConnection.getOutputStream();
-                outputStream.write(json.toString().getBytes());
-                outputStream.flush();
+                if(currentStep - sendStep > 0) {
+                    soundgymAPI = new URL("https://api.dev.soundgym.kr/app/user/health/steps");
+                    // Create connection
+                    HttpsURLConnection soundgymConnection =
+                            (HttpsURLConnection) soundgymAPI.openConnection();
+                    // 요청방식 선택
+                    soundgymConnection.setRequestMethod("POST");
+                    //헤더옵션 추가
+                    soundgymConnection.setRequestProperty("Authorization", userToken);
+                    soundgymConnection.setRequestProperty("Content-Type", "application/json");
+                    soundgymConnection.setRequestProperty("Accept", "application/json");
+                    // InputStream으로 서버로 부터 응답을 받겠다는 옵션
+                    soundgymConnection.setDoInput(true);
+                    // OutputStream으로 Post 데이터를 넘겨주겠다는 옵션
+                    soundgymConnection.setDoOutput(true);
+                    // 서버로 전달할 Json객체 생성
+                    JSONObject json = new JSONObject();
+                    json.put("stepCount", currentStep);
+                    json.put("registeredAt", System.currentTimeMillis());
+                    // Request Body에 데이터를 담기위한 OutputStream 객체 생성
+                    OutputStream outputStream;
+                    outputStream = soundgymConnection.getOutputStream();
+                    outputStream.write(json.toString().getBytes());
+                    outputStream.flush();
 
-                // 실제 서버로 Request 요청 하는 부분 (응답 코드를 받음, 200은 성공, 나머지 에러)
-                int response = soundgymConnection.getResponseCode();
-                String responseMessage = soundgymConnection.getResponseMessage();
-                // 접속해지
-                soundgymConnection.disconnect();
-                if (response == 200) {
-                    setTimeout(() -> callScheduleApi(), 60000 * 20);
+                    // 실제 서버로 Request 요청 하는 부분 (응답 코드를 받음, 200은 성공, 나머지 에러)
+                    int response = soundgymConnection.getResponseCode();
+                    String responseMessage = soundgymConnection.getResponseMessage();
+                    // 접속해지
+                    soundgymConnection.disconnect();
+                    if (response == 200) {
+                        //보낸 데이터 저장
+                        sendStep = currentStep;
+                        setTimeout(() -> callScheduleApi(), 60000 * 20);
+                    }
                 }
             } catch (MalformedURLException e) {
                 System.err.println(e);
