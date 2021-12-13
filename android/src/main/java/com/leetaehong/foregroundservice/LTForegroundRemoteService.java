@@ -159,6 +159,8 @@ public class LTForegroundRemoteService extends Service {
                     soundgymConnection.setRequestProperty("Authorization", userToken);
                     // InputStream으로 서버로 부터 응답을 받겠다는 옵션
                     soundgymConnection.setDoInput(true);
+                    // OutputStream으로 Post 데이터를 넘겨주겠다는 옵션
+                    soundgymConnection.setDoOutput(true);
                     // 요청방식 선택
                     soundgymConnection.setRequestMethod("POST");
                     // 서버로 전달할 Json객체 생성
