@@ -28,6 +28,7 @@ public class LTForegroundRemoteService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.d(TAG,"onBind Call!!");
         return mMessenger.getBinder();
     }
 
