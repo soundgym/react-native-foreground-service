@@ -8,30 +8,45 @@ import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 
 import android.app.Notification;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
 import android.util.Log;
 
-import com.facebook.react.bridge.Arguments;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class LTForegroundRemoteService extends Service {
     private final String TAG = "RemoteService";
+
+    //이전 운동데이터 저장
     private Bundle prevBundle;
+    private int currentStep;
+    //유저정보
+    private String userId;
+    private String userToken;
+    // Create URL
+    private URL soundgymAPI;
+
     private ArrayList<Messenger> mClientCallbacks = new ArrayList();
     final Messenger mMessenger = new Messenger(new CallbackHandler());
 
     @Override
-    public IBinder onBind(Intent intent) { return mMessenger.getBinder(); }
+    public IBinder onBind(Intent intent) {
+        return mMessenger.getBinder();
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -43,15 +58,13 @@ public class LTForegroundRemoteService extends Service {
                     if (notificationConfig != null && notificationConfig.containsKey("id")) {
                         Notification notification = NotificationHelper.getInstance(getApplicationContext())
                                 .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.FOREGROUND);
-                        if(notificationConfig.getBoolean("ongoing")) {
+                        if (notificationConfig.getBoolean("ongoing")) {
                             notification.flags |= Notification.FLAG_ONGOING_EVENT;
                             notification.flags |= Notification.FLAG_SHOW_LIGHTS;
                         }
-                        startForeground((int)notificationConfig.getDouble("id"), notification);
-                        Log.d(TAG,"################### user info");
-                        Log.d(TAG,notificationConfig.getString("uid"));
-                        Log.d(TAG,notificationConfig.getString("userToken"));
-                        Log.d(TAG,"################### user info");
+                        startForeground((int) notificationConfig.getDouble("id"), notification);
+                        userId = notificationConfig.getString("uid");
+                        userToken = notificationConfig.getString("userToken");
                     }
                 }
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_STOP)) {
@@ -62,26 +75,27 @@ public class LTForegroundRemoteService extends Service {
                 prevBundle = notificationConfig;
                 Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
                         .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.BACKGROUND);
-                NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"),updateNotification);
-            } else if(action.equals(Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE)) {
+                NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"), updateNotification);
+            } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE)) {
                 String stepText = prevBundle.getString("text");
-                stepText = stepText.replaceAll("[^0-9]","");  // or you can also use [0-9]
+                stepText = stepText.replaceAll("[^0-9]", "");  // or you can also use [0-9]
                 int step = Integer.parseInt(stepText);
+                currentStep = step + 1;
                 prevBundle.remove("text");
-                prevBundle.putString("text",(step + 1)  + " (보)");
+                prevBundle.putString("text", currentStep + " (보)");
                 Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
                         .buildNotification(getApplicationContext(), prevBundle, NotificationHelper.NotificationType.BACKGROUND);
-                NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) prevBundle.getDouble("id"),updateNotification);
+                NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) prevBundle.getDouble("id"), updateNotification);
             }
         }
         return START_REDELIVER_INTENT;
     }
 
 
-    private class CallbackHandler  extends Handler {
+    private class CallbackHandler extends Handler {
         @Override
-        public void handleMessage( Message msg ){
-            switch( msg.what ){
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
                 case MSG_CLIENT_CONNECT:
                     Log.d(TAG, "Received MSG_CLIENT_CONNECT message from client");
                     mClientCallbacks.add(msg.replyTo);
@@ -107,24 +121,70 @@ public class LTForegroundRemoteService extends Service {
                     break;
                 case MSG_APP_DESTROY:
                     Log.d(TAG, "Received MSG_APP_DESTROY message from client");
-                    LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext(),prevBundle);
+                    LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext(), prevBundle);
                     ltSensorListner.start(1000);
                     break;
             }
         }
     }
 
-    private void setTimeout(Runnable runnable, int delay){
+    private void setTimeout(Runnable runnable, int delay) {
         new Thread(() -> {
             try {
                 Thread.sleep(delay);
                 runnable.run();
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 System.err.println(e);
             }
         }).start();
     }
 
+    private void callScheduleApi() {
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                // All your networking logic
+                // should be here
+                try {
+                    soundgymAPI = new URL("https://api.dev.soundgym.kr/app/user/health/steps");
+                    // Create connection
+                    HttpsURLConnection soundgymConnection =
+                            (HttpsURLConnection) soundgymAPI.openConnection();
+                    //헤더옵션 추가
+                    soundgymConnection.setRequestProperty("Authorization", userToken);
+                    // InputStream으로 서버로 부터 응답을 받겠다는 옵션
+                    soundgymConnection.setDoInput(true);
+                    // 요청방식 선택
+                    soundgymConnection.setRequestMethod("POST");
+                    // 서버로 전달할 Json객체 생성
+                    JSONObject json = new JSONObject();
+                    json.put("stepCount", currentStep);
+                    json.put("registeredAt", System.currentTimeMillis());
+                    // Request Body에 데이터를 담기위한 OutputStream 객체 생성
+                    OutputStream outputStream;
+                    outputStream = soundgymConnection.getOutputStream();
+                    outputStream.write(json.toString().getBytes());
+                    outputStream.flush();
+                    // 실제 서버로 Request 요청 하는 부분 (응답 코드를 받음, 200은 성공, 나머지 에러)
+                    int response = soundgymConnection.getResponseCode();
+                    String responseMessage = soundgymConnection.getResponseMessage();
+                    Log.d(TAG, "" + response);
+                    // 접속해지
+                    soundgymConnection.disconnect();
+                    if (response == 200) {
+                        Log.d(TAG, responseMessage);
+                        setTimeout(() -> callScheduleApi(), 60000 * 20);
+                    }
+                } catch (MalformedURLException e) {
+                    System.err.println(e);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.err.println(e);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
 }
