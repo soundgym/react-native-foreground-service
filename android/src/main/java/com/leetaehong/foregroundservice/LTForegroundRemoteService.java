@@ -22,13 +22,13 @@ import android.util.Log;
 import com.facebook.react.bridge.Arguments;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class LTForegroundRemoteService extends Service {
     private final String TAG = "RemoteService";
     private Bundle prevBundle;
     private ArrayList<Messenger> mClientCallbacks = new ArrayList();
     final Messenger mMessenger = new Messenger(new CallbackHandler());
-    SharedPreferences sharedPref;
 
     @Override
     public IBinder onBind(Intent intent) { return mMessenger.getBinder(); }
@@ -55,22 +55,19 @@ public class LTForegroundRemoteService extends Service {
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_UPDATE)) {
                 Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
                 // 최근 데이터 저장
-                saveBundle(notificationConfig);
                 prevBundle = notificationConfig;
                 Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
                         .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.BACKGROUND);
                 NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"),updateNotification);
             } else if(action.equals(Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE)) {
-                Log.e("prevBundle : ",prevBundle.toString());
-                getBundle();
-//                String stepText = prevBundle.getString("text");
-//                stepText = stepText.replaceAll("\\d", "");  // or you can also use [0-9]
-//                int step = Integer.parseInt(stepText);
-//                prevBundle.remove("text");
-//                prevBundle.putString("text",(step + 1)  + " (보)");
-//                Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
-//                        .buildNotification(getApplicationContext(), prevBundle, NotificationHelper.NotificationType.BACKGROUND);
-//                NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) prevBundle.getDouble("id"),updateNotification);
+                String stepText = prevBundle.getString("text");
+                stepText = stepText.replaceAll("\\d", "");  // or you can also use [0-9]
+                int step = Integer.parseInt(stepText);
+                prevBundle.remove("text");
+                prevBundle.putString("text",(step + 1)  + " (보)");
+                Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
+                        .buildNotification(getApplicationContext(), prevBundle, NotificationHelper.NotificationType.BACKGROUND);
+                NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) prevBundle.getDouble("id"),updateNotification);
             }
         }
         return START_REDELIVER_INTENT;
@@ -113,18 +110,16 @@ public class LTForegroundRemoteService extends Service {
         }
     }
 
-    private void saveBundle(Bundle bundle) {
-        sharedPref  = getSharedPreferences("AsyncStorage", Context.MODE_PRIVATE);
-        Log.e(TAG,"@@@@@@@@@@@@ saveBundle");
-        Log.e(TAG,bundle.toString());
-        sharedPref.edit().putString("prevForegroundBundle",bundle.toString());
-    }
-
-    private void getBundle() {
-        sharedPref  = getSharedPreferences("AsyncStorage", Context.MODE_PRIVATE);
-        String bundleString = sharedPref.getString("prevForegroundBundle","");
-        Log.e(TAG,"@@@@@@@@@@@@ getBundle");
-        Log.e(TAG,bundleString);
+    private void setTimeout(Runnable runnable, int delay){
+        new Thread(() -> {
+            try {
+                Thread.sleep(delay);
+                runnable.run();
+            }
+            catch (Exception e){
+                System.err.println(e);
+            }
+        }).start();
     }
 
 

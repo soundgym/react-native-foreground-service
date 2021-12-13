@@ -1,28 +1,14 @@
 package com.leetaehong.foregroundservice;
 
-import static com.leetaehong.foregroundservice.Constants.MSG_ADDED_VALUE;
-import static com.leetaehong.foregroundservice.Constants.MSG_CLIENT_CONNECT;
-import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
-
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Looper;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 import android.util.Log;
-
-import com.facebook.react.bridge.Arguments;
 
 
 public class LTSensorListner implements SensorEventListener {
@@ -62,7 +48,7 @@ public class LTSensorListner implements SensorEventListener {
         if (mySensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
             long curTime = System.currentTimeMillis();
             if ((curTime - lastUpdate) > delay) {
-                int stepCount = (int)sensorEvent.values[0];
+//                int stepCount = (int)sensorEvent.values[0];
                 Intent intent = new Intent(mContext.getApplicationContext(), LTForegroundRemoteService.class);
                 intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE);
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
