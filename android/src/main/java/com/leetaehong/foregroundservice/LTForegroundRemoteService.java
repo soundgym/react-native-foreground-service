@@ -8,7 +8,9 @@ import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -25,6 +27,7 @@ public class LTForegroundRemoteService extends Service {
 
     private ArrayList<Messenger> mClientCallbacks = new ArrayList();
     final Messenger mMessenger = new Messenger(new CallbackHandler());
+    SharedPreferences sharedPref;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -101,11 +104,18 @@ public class LTForegroundRemoteService extends Service {
                     break;
                 case MSG_APP_DESTROY:
                     Log.d(TAG, "Received MSG_APP_DESTROY message from client");
-                    LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext());
+                    LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext(),prevBundle);
                     ltSensorListner.start(1000);
                     break;
             }
         }
     }
+
+    private void saveBundle(Bundle bundle) {
+        sharedPref  = getSharedPreferences("AsyncStorage", Context.MODE_PRIVATE);
+        sharedPref.edit().putString("prevForegroundBundle",bundle.toString());
+
+    }
+
 
 }
