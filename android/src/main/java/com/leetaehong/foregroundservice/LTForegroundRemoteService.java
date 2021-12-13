@@ -19,21 +19,19 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.facebook.react.bridge.Arguments;
+
 import java.util.ArrayList;
 
 public class LTForegroundRemoteService extends Service {
     private final String TAG = "RemoteService";
-    private Bundle prevBundle;
 
     private ArrayList<Messenger> mClientCallbacks = new ArrayList();
     final Messenger mMessenger = new Messenger(new CallbackHandler());
     SharedPreferences sharedPref;
 
     @Override
-    public IBinder onBind(Intent intent) {
-        Log.d(TAG,"onBind Call!!");
-        return mMessenger.getBinder();
-    }
+    public IBinder onBind(Intent intent) { return mMessenger.getBinder(); }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -56,19 +54,21 @@ public class LTForegroundRemoteService extends Service {
                 stopSelf();
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_UPDATE)) {
                 Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
-                prevBundle = notificationConfig;
+                // 최근 데이터 저장
+                saveBundle(notificationConfig);
                 Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
                         .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.BACKGROUND);
                 NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"),updateNotification);
             } else if(action.equals(Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE)) {
-                String stepText = prevBundle.getString("text");
-                stepText = stepText.replaceAll("\\d", "");  // or you can also use [0-9]
-                int step = Integer.parseInt(stepText);
-                prevBundle.remove("text");
-                prevBundle.putString("text",(step + 1)  + " (보)");
-                Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
-                        .buildNotification(getApplicationContext(), prevBundle, NotificationHelper.NotificationType.BACKGROUND);
-                NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) prevBundle.getDouble("id"),updateNotification);
+                getBundle();
+//                String stepText = prevBundle.getString("text");
+//                stepText = stepText.replaceAll("\\d", "");  // or you can also use [0-9]
+//                int step = Integer.parseInt(stepText);
+//                prevBundle.remove("text");
+//                prevBundle.putString("text",(step + 1)  + " (보)");
+//                Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
+//                        .buildNotification(getApplicationContext(), prevBundle, NotificationHelper.NotificationType.BACKGROUND);
+//                NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) prevBundle.getDouble("id"),updateNotification);
             }
         }
         return START_REDELIVER_INTENT;
@@ -104,7 +104,7 @@ public class LTForegroundRemoteService extends Service {
                     break;
                 case MSG_APP_DESTROY:
                     Log.d(TAG, "Received MSG_APP_DESTROY message from client");
-                    LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext(),prevBundle);
+                    LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext());
                     ltSensorListner.start(1000);
                     break;
             }
@@ -114,7 +114,12 @@ public class LTForegroundRemoteService extends Service {
     private void saveBundle(Bundle bundle) {
         sharedPref  = getSharedPreferences("AsyncStorage", Context.MODE_PRIVATE);
         sharedPref.edit().putString("prevForegroundBundle",bundle.toString());
+    }
 
+    private void getBundle() {
+        sharedPref  = getSharedPreferences("AsyncStorage", Context.MODE_PRIVATE);
+        String bundleString = sharedPref.getString("prevForegroundBundle","");
+        Log.e(TAG,bundleString);
     }
 
 

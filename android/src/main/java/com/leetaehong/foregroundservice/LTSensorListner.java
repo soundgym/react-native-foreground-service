@@ -30,17 +30,14 @@ public class LTSensorListner implements SensorEventListener {
     private SensorManager mSensorManager;
     private Sensor mStepCounter;
     private Context mContext;
-    private Bundle prevBundle;
 
     private long lastUpdate = 0;
     private int delay;
 
 
-    public LTSensorListner(Context context,Bundle bundle) {
+    public LTSensorListner(Context context) {
         mSensorManager = (SensorManager) context.getSystemService(context.SENSOR_SERVICE);
         mContext = context;
-        prevBundle = bundle;
-        Log.e("LTSensorListner ",bundle.toString());
     }
 
     public int start(int delay) {
