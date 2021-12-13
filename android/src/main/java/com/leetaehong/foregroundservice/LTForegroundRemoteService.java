@@ -77,12 +77,12 @@ public class LTForegroundRemoteService extends Service {
                 Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
                 // 최근 데이터 저장
                 prevBundle = notificationConfig;
-                changeStepCount(notificationConfig,null);
+                changeStepCount(notificationConfig,false);
                 Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
                         .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.BACKGROUND);
                 NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"), updateNotification);
             } else if (action.equals(Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE)) {
-                changeStepCount(prevBundle,null);
+                changeStepCount(prevBundle,false);
                 prevBundle.remove("text");
                 prevBundle.putString("text", currentStep + " (보)");
                 Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
