@@ -174,6 +174,7 @@ public class LTForegroundRemoteService extends Service {
                     int response = soundgymConnection.getResponseCode();
                     String responseMessage = soundgymConnection.getResponseMessage();
                     Log.d(TAG, "" + response);
+                    Log.d(TAG, responseMessage);
                     // 접속해지
                     soundgymConnection.disconnect();
                     if (response == 200) {
