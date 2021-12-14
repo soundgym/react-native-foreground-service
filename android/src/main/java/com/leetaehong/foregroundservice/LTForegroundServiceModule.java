@@ -211,7 +211,6 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
     {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d(TAG, "onServiceConnected");
             mServiceCallback = new Messenger(service);
 
             // connect to service
@@ -219,7 +218,6 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
             connect_msg.replyTo = mClientCallback;
             try {
                 mServiceCallback.send(connect_msg);
-                Log.d(TAG, "Send MSG_CLIENT_CONNECT message to Service");
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -241,6 +239,9 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
 
         @Override
         public void handleMessage(Message msg) {
+            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+            Log.d(TAG,"" + msg.what);
+            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             switch (msg.what) {
                 case MSG_ADDED_VALUE:
                     try {
