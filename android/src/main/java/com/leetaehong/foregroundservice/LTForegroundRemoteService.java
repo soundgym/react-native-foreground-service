@@ -175,11 +175,6 @@ public class LTForegroundRemoteService extends Service {
             // All your networking logic
             // should be here
             try {
-                Properties properties = new Properties();
-                String rootPath = System.getProperty("user.dir");
-                properties.load(new FileInputStream(new File(rootPath, "local.properties")));
-                String apiPath = properties.getProperty("soundgym_api");
-                Log.d(TAG,apiPath);
                 if(currentStep - sendStep > 0) {
                     soundgymAPI = new URL("https://api.dev.soundgym.kr/app/user/health/steps");
                     // Create connection
