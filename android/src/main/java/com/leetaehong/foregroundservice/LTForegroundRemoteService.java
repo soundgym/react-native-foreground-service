@@ -80,6 +80,7 @@ public class LTForegroundRemoteService extends Service {
                     break;
                 case Constants.ACTION_FOREGROUND_SERVICE_STOP:
                     stopSelf();
+                    NotificationHelper.getInstance(getApplicationContext()).cancelAllNotification();
                     break;
                 case Constants.ACTION_FOREGROUND_SERVICE_UPDATE:
                     Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);

@@ -4,7 +4,6 @@
 
 package com.leetaehong.foregroundservice;
 
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -20,8 +19,6 @@ import com.facebook.react.bridge.ReadableMap;
 
 import static com.leetaehong.foregroundservice.Constants.ERROR_ANDROID_VERSION;
 import static com.leetaehong.foregroundservice.Constants.ERROR_INVALID_CONFIG;
-
-import androidx.annotation.RequiresApi;
 
 class NotificationHelper {
     private static NotificationHelper instance = null;
@@ -64,15 +61,17 @@ class NotificationHelper {
             String channelDescription = channelConfig.getString("description");
             int channelImportance = channelConfig.hasKey("importance") ?
                     channelConfig.getInt("importance") : NotificationManager.IMPORTANCE_LOW;
-            boolean enableVibration = channelConfig.hasKey("enableVibration") && channelConfig.getBoolean("enableVibration");
+//            boolean enableVibration = channelConfig.hasKey("enableVibration") && channelConfig.getBoolean("enableVibration");
             if (channelId == null || channelName == null) {
                 promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: Channel id or name is not specified");
                 return;
             }
             NotificationChannel channel = new NotificationChannel(channelId, channelName, channelImportance);
             channel.setDescription(channelDescription);
+//            channel.enableVibration(enableVibration);
             channel.enableVibration(true);
             channel.setVibrationPattern(new long[]{ 0 });
+            channel.setSound(null,null);
             mNotificationManager.createNotificationChannel(channel);
             promise.resolve(null);
         } else {
@@ -168,6 +167,10 @@ class NotificationHelper {
      */
     void updateNotification(int notificationId, Notification notification) {
         mNotificationManager.notify(notificationId, notification);
+    }
+
+    void cancelAllNotification() {
+        mNotificationManager.cancelAll();
     }
 
     Boolean validCheckNotificationConfig(ReadableMap notificationConfig, Promise promise) {
