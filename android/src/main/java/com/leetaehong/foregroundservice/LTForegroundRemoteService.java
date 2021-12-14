@@ -225,6 +225,9 @@ public class LTForegroundRemoteService extends Service {
                         }
                     } else if (forceCall) {
                         int prevStep = getStep();
+                        Log.d(TAG,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+                        Log.d(TAG,"prevStep : " + prevStep);
+                        Log.d(TAG,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
                         if (prevStep > 0) {
                             // 서버로 전달할 Json객체 생성
                             JSONObject json = new JSONObject();
