@@ -63,7 +63,6 @@ public class LTForegroundRemoteService extends Service {
         if (action != null) {
             switch (action) {
                 case Constants.ACTION_FOREGROUND_SERVICE_START:
-                    sharedPref = getApplicationContext().getSharedPreferences("soundgymStep", Context.MODE_PRIVATE);
                     if (intent.getExtras() != null && intent.getExtras().containsKey(NOTIFICATION_CONFIG)) {
                         Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
                         if (notificationConfig != null && notificationConfig.containsKey("id")) {
@@ -273,6 +272,7 @@ public class LTForegroundRemoteService extends Service {
     }
 
     private int getStep() {
+        sharedPref = getApplicationContext().getSharedPreferences("soundgymStep", Context.MODE_PRIVATE);
         String count = sharedPref.getString("stepCount", "0");
         return Integer.parseInt(count);
     }
