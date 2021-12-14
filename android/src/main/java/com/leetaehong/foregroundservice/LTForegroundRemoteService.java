@@ -176,13 +176,14 @@ public class LTForegroundRemoteService extends Service {
             // All your networking logic
             // should be here
             try {
-                ApplicationInfo appInfo = getApplicationContext().getApplicationInfo();
-                String title = getApplicationContext().getPackageManager().getApplicationLabel(appInfo).toString();
-                Log.d(TAG,"#####################");
-                Log.d(TAG,title);
-                Log.d(TAG,"#####################");
                 if(currentStep - sendStep > 0) {
-                    soundgymAPI = new URL("https://api.dev.soundgym.kr/app/user/health/steps");
+                    ApplicationInfo appInfo = getApplicationContext().getApplicationInfo();
+                    String title = getApplicationContext().getPackageManager().getApplicationLabel(appInfo).toString();
+                    String apiPath = "https://api.dev.soundgym.kr/app/user/health/steps";
+                    if(!title.contains("dev")) {
+                        apiPath = "https://api.soundgym.kr/app/user/health/steps";
+                    }
+                    soundgymAPI = new URL(apiPath);
                     // Create connection
                     HttpsURLConnection soundgymConnection =
                             (HttpsURLConnection) soundgymAPI.openConnection();
