@@ -267,6 +267,7 @@ public class LTForegroundRemoteService extends Service {
     }
 
     private int getStep() {
+        sharedPref = getApplicationContext().getSharedPreferences("soundgymStep", Context.MODE_PRIVATE);
         String count = sharedPref.getString("stepCount", "0");
         return Integer.parseInt(count);
     }
