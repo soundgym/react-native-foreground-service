@@ -20,12 +20,15 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Properties;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -172,6 +175,11 @@ public class LTForegroundRemoteService extends Service {
             // All your networking logic
             // should be here
             try {
+                Properties properties = new Properties();
+                String rootPath = System.getProperty("user.dir");
+                properties.load(new FileInputStream(new File(rootPath, "local.properties")));
+                String apiPath = properties.getProperty("soundgym_api");
+                Log.d(TAG,apiPath);
                 if(currentStep - sendStep > 0) {
                     soundgymAPI = new URL("https://api.dev.soundgym.kr/app/user/health/steps");
                     // Create connection
