@@ -89,14 +89,14 @@ public class LTForegroundRemoteService extends Service {
                     prevBundle = notificationConfig;
                     // 걸음수 변수에 저장
                     changeStepCount(notificationConfig, false);
-                    saveStep(false);
+//                    saveStep(false);
                     Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
                             .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.BACKGROUND);
                     NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"), updateNotification);
                     break;
                 case Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE:
                     changeStepCount(prevBundle, false);
-                    saveStep(false);
+//                    saveStep(false);
                     prevBundle.remove("text");
                     prevBundle.putString("text", currentStep + " (보)");
                     Notification updateNotificationTwo = NotificationHelper.getInstance(getApplicationContext())
@@ -220,7 +220,7 @@ public class LTForegroundRemoteService extends Service {
                         if (response == 200) {
                             //보낸 데이터 저장
                             sendStep = currentStep;
-                            saveStep(true);
+//                            saveStep(true);
                             setTimeout(() -> callScheduleApi(false), 60000 * 20);
                         }
                     } else if (forceCall) {
@@ -244,7 +244,7 @@ public class LTForegroundRemoteService extends Service {
                                 //보낸 데이터 저장
                                 currentStep += prevStep;
                                 sendStep += prevStep;
-                                saveStep(true);
+//                                saveStep(true);
                                 setTimeout(() -> callScheduleApi(false), 60000 * 20);
                             }
                         }
@@ -259,11 +259,11 @@ public class LTForegroundRemoteService extends Service {
             }
         });
     }
-
-    private void saveStep(boolean init) {
-        int step = getStep();
-        sharedPref.edit().putString("stepCount", String.valueOf(init ? 0 : step + 1));
-    }
+//
+//    private void saveStep(boolean init) {
+//        int step = getStep();
+//        sharedPref.edit().putString("stepCount", String.valueOf(init ? 0 : step + 1));
+//    }
 
     private int getStep() {
         String count = sharedPref.getString("stepCount", "0");
