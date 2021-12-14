@@ -270,7 +270,7 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
     private void sendEvent(String eventName, @Nullable Object params) {
         try {
             ReactApplicationContext reactApplicationContext = getReactApplicationContext();
-            if(reactApplicationContext.hasActiveReactInstance()) {
+            if(reactApplicationContext.hasActiveCatalystInstance()) {
                 reactApplicationContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                         .emit(eventName, params);
             } else {
