@@ -9,6 +9,7 @@ import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -176,6 +177,11 @@ public class LTForegroundRemoteService extends Service {
             // should be here
             try {
                 if(currentStep - sendStep > 0) {
+                    ApplicationInfo appInfo = getApplicationContext().getApplicationInfo();
+                    String title = getApplicationContext().getPackageManager().getApplicationLabel(appInfo).toString();
+                    Log.d(TAG,"#####################");
+                    Log.d(TAG,title);
+                    Log.d(TAG,"#####################");
                     soundgymAPI = new URL("https://api.dev.soundgym.kr/app/user/health/steps");
                     // Create connection
                     HttpsURLConnection soundgymConnection =
