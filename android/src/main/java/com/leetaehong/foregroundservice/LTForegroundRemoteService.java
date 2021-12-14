@@ -268,7 +268,7 @@ public class LTForegroundRemoteService extends Service {
         Log.d(TAG,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         Log.d(TAG,"saveStep : " + step);
         Log.d(TAG,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        sharedPref.edit().putString("stepCount", String.valueOf(init ? 0 : step + 1));
+        sharedPref.edit().putString("stepCount", String.valueOf(init ? 0 : step + 1)).apply();
     }
 
     private int getStep() {
