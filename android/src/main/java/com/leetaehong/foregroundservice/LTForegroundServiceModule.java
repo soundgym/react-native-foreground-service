@@ -268,7 +268,6 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
             if (reactApplicationContext.hasActiveCatalystInstance()) {
                 reactApplicationContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                         .emit(eventName, params);
-                Log.e(TAG,"@@@@@@@@@@@@@@@@@$$$$$$$$$$ call end sendEvent");
             } else {
                 setTimeout(() -> sendEvent(eventName, params), 1000);
             }
