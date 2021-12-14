@@ -8,7 +8,9 @@ import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 
 import android.app.Notification;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -48,6 +50,7 @@ public class LTForegroundRemoteService extends Service {
 
     private ArrayList<Messenger> mClientCallbacks = new ArrayList<>();
     final Messenger mMessenger = new Messenger(new CallbackHandler());
+    private final SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("soundgymStep", Context.MODE_PRIVATE);
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -58,8 +61,8 @@ public class LTForegroundRemoteService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         if (action != null) {
-            switch(action){
-                case Constants.ACTION_FOREGROUND_SERVICE_START :
+            switch (action) {
+                case Constants.ACTION_FOREGROUND_SERVICE_START:
                     if (intent.getExtras() != null && intent.getExtras().containsKey(NOTIFICATION_CONFIG)) {
                         Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
                         if (notificationConfig != null && notificationConfig.containsKey("id")) {
@@ -72,25 +75,28 @@ public class LTForegroundRemoteService extends Service {
                             startForeground((int) notificationConfig.getDouble("id"), notification);
                             userId = notificationConfig.getString("uid");
                             userToken = notificationConfig.getString("userToken");
-                            changeStepCount(notificationConfig,true);
-                            callScheduleApi();
+                            changeStepCount(notificationConfig, true);
+                            callScheduleApi(true);
                         }
                     }
                     break;
-                case Constants.ACTION_FOREGROUND_SERVICE_STOP :
+                case Constants.ACTION_FOREGROUND_SERVICE_STOP:
                     stopSelf();
                     break;
-                case Constants.ACTION_FOREGROUND_SERVICE_UPDATE :
+                case Constants.ACTION_FOREGROUND_SERVICE_UPDATE:
                     Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
                     // 최근 데이터 저장
                     prevBundle = notificationConfig;
-                    changeStepCount(notificationConfig,false);
+                    // 걸음수 변수에 저장
+                    changeStepCount(notificationConfig, false);
+                    saveStep(false);
                     Notification updateNotification = NotificationHelper.getInstance(getApplicationContext())
                             .buildNotification(getApplicationContext(), notificationConfig, NotificationHelper.NotificationType.BACKGROUND);
                     NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"), updateNotification);
                     break;
-                case Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE :
-                    changeStepCount(prevBundle,false);
+                case Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE:
+                    changeStepCount(prevBundle, false);
+                    saveStep(false);
                     prevBundle.remove("text");
                     prevBundle.putString("text", currentStep + " (보)");
                     Notification updateNotificationTwo = NotificationHelper.getInstance(getApplicationContext())
@@ -107,11 +113,8 @@ public class LTForegroundRemoteService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e(TAG,"onDestroy call!!");
-        callScheduleApi();
-        Log.e(TAG,"onDestroy call!! end");
+        callScheduleApi(true);
     }
-
 
 
     private class CallbackHandler extends Handler {
@@ -155,7 +158,7 @@ public class LTForegroundRemoteService extends Service {
         stepText = stepText.replaceAll("[^0-9]", "");  // or you can also use [0-9]
         int step = Integer.parseInt(stepText);
         currentStep = step + 1;
-        if(isFirst) {
+        if (isFirst) {
             sendStep = step + 1;
         }
         return currentStep;
@@ -173,18 +176,16 @@ public class LTForegroundRemoteService extends Service {
         }).start();
     }
 
-    private void callScheduleApi() {
+    private void callScheduleApi(boolean forceCall) {
         AsyncTask.execute(() -> {
             // All your networking logic
             // should be here
             try {
-                Log.e(TAG,"onDestroy call!! come!!!");
-                Log.e(TAG,String.valueOf(currentStep - sendStep) + " " +String.valueOf(currentStep) + " " + String.valueOf(sendStep));
-                if(currentStep - sendStep > 0) {
+                if (forceCall || currentStep - sendStep > 0) {
                     ApplicationInfo appInfo = getApplicationContext().getApplicationInfo();
                     String title = getApplicationContext().getPackageManager().getApplicationLabel(appInfo).toString();
                     String apiPath = "https://api.dev.soundgym.kr/app/user/health/steps";
-                    if(!title.contains("dev")) {
+                    if (!title.contains("dev")) {
                         apiPath = "https://api.soundgym.kr/app/user/health/steps";
                     }
                     soundgymAPI = new URL(apiPath);
@@ -201,25 +202,52 @@ public class LTForegroundRemoteService extends Service {
                     soundgymConnection.setDoInput(true);
                     // OutputStream으로 Post 데이터를 넘겨주겠다는 옵션
                     soundgymConnection.setDoOutput(true);
-                    // 서버로 전달할 Json객체 생성
-                    JSONObject json = new JSONObject();
-                    json.put("stepCount", currentStep);
-                    json.put("registeredAt", System.currentTimeMillis());
-                    // Request Body에 데이터를 담기위한 OutputStream 객체 생성
-                    OutputStream outputStream;
-                    outputStream = soundgymConnection.getOutputStream();
-                    outputStream.write(json.toString().getBytes());
-                    outputStream.flush();
-
-                    // 실제 서버로 Request 요청 하는 부분 (응답 코드를 받음, 200은 성공, 나머지 에러)
-                    int response = soundgymConnection.getResponseCode();
-                    String responseMessage = soundgymConnection.getResponseMessage();
-                    // 접속해지
-                    soundgymConnection.disconnect();
-                    if (response == 200) {
-                        //보낸 데이터 저장
-                        sendStep = currentStep;
-                        setTimeout(() -> callScheduleApi(), 60000 * 20);
+                    if (currentStep - sendStep > 0) {
+                        // 서버로 전달할 Json객체 생성
+                        JSONObject json = new JSONObject();
+                        json.put("stepCount", currentStep);
+                        json.put("registeredAt", System.currentTimeMillis());
+                        // Request Body에 데이터를 담기위한 OutputStream 객체 생성
+                        OutputStream outputStream;
+                        outputStream = soundgymConnection.getOutputStream();
+                        outputStream.write(json.toString().getBytes());
+                        outputStream.flush();
+                        // 실제 서버로 Request 요청 하는 부분 (응답 코드를 받음, 200은 성공, 나머지 에러)
+                        int response = soundgymConnection.getResponseCode();
+                        String responseMessage = soundgymConnection.getResponseMessage();
+                        // 접속해지
+                        soundgymConnection.disconnect();
+                        if (response == 200) {
+                            //보낸 데이터 저장
+                            sendStep = currentStep;
+                            saveStep(true);
+                            setTimeout(() -> callScheduleApi(false), 60000 * 20);
+                        }
+                    } else if (forceCall) {
+                        int prevStep = getStep();
+                        if (prevStep > 0) {
+                            // 서버로 전달할 Json객체 생성
+                            JSONObject json = new JSONObject();
+                            json.put("stepCount", prevStep);
+                            json.put("registeredAt", System.currentTimeMillis());
+                            // Request Body에 데이터를 담기위한 OutputStream 객체 생성
+                            OutputStream outputStream;
+                            outputStream = soundgymConnection.getOutputStream();
+                            outputStream.write(json.toString().getBytes());
+                            outputStream.flush();
+                            // 실제 서버로 Request 요청 하는 부분 (응답 코드를 받음, 200은 성공, 나머지 에러)
+                            int response = soundgymConnection.getResponseCode();
+                            String responseMessage = soundgymConnection.getResponseMessage();
+                            // 접속해지
+                            soundgymConnection.disconnect();
+                            if (response == 200) {
+                                //보낸 데이터 저장
+                                currentStep += prevStep;
+                                sendStep += prevStep;
+                                saveStep(true);
+                                setTimeout(() -> callScheduleApi(false), 60000 * 20);
+                            }
+                        }
                     }
                 }
             } catch (MalformedURLException e) {
@@ -231,5 +259,16 @@ public class LTForegroundRemoteService extends Service {
             }
         });
     }
+
+    private void saveStep(boolean init) {
+        int step = getStep();
+        sharedPref.edit().putString("stepCount", String.valueOf(init ? 0 : step + 1));
+    }
+
+    private int getStep() {
+        String count = sharedPref.getString("stepCount", "0");
+        return Integer.parseInt(count);
+    }
+
 
 }
