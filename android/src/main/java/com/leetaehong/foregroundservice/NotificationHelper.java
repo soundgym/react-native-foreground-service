@@ -71,7 +71,8 @@ class NotificationHelper {
             }
             NotificationChannel channel = new NotificationChannel(channelId, channelName, channelImportance);
             channel.setDescription(channelDescription);
-            channel.enableVibration(enableVibration);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(new long[]{ 0 });
             mNotificationManager.createNotificationChannel(channel);
             promise.resolve(null);
         } else {
@@ -79,7 +80,7 @@ class NotificationHelper {
         }
     }
 
-    Notification buildNotification(Context context, Bundle notificationConfig,NotificationType notificationType) {
+    Notification buildNotification(Context context, Bundle notificationConfig, NotificationType notificationType) {
         if (notificationConfig == null) {
             Log.e("NotificationHelper", "buildNotification: invalid config");
             return null;
@@ -139,12 +140,12 @@ class NotificationHelper {
             ongoing = false;
         }
 
-        if(ongoing) {
+        if (ongoing) {
             notificationBuilder.setOngoing(true);
             notificationBuilder.setAutoCancel(false);
         }
 
-        if(NotificationType.BACKGROUND.equals(notificationType)) {
+        if (NotificationType.BACKGROUND.equals(notificationType)) {
             final PendingIntent contentIntent;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
