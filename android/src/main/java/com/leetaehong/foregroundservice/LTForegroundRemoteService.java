@@ -20,6 +20,12 @@ import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -225,9 +231,6 @@ public class LTForegroundRemoteService extends Service {
                         }
                     } else if (forceCall) {
                         int prevStep = getStep();
-                        Log.d(TAG,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-                        Log.d(TAG,"prevStep : " + prevStep);
-                        Log.d(TAG,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
                         if (prevStep > 0) {
                             // 서버로 전달할 Json객체 생성
                             JSONObject json = new JSONObject();
@@ -248,6 +251,9 @@ public class LTForegroundRemoteService extends Service {
                                 currentStep += prevStep;
                                 sendStep += prevStep;
                                 saveStep(true);
+                                JSONObject obj = new JSONObject();
+                                obj.put("refresh",true);
+                                sendEvent("fetchHealthData",obj);
                                 setTimeout(() -> callScheduleApi(false), 60000 * 20);
                             }
                         }
@@ -265,9 +271,6 @@ public class LTForegroundRemoteService extends Service {
 
     private void saveStep(boolean init) {
         int step = getStep();
-        Log.d(TAG,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-        Log.d(TAG,"saveStep : " + step);
-        Log.d(TAG,"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
         sharedPref.edit().putString("stepCount", String.valueOf(init ? 0 : step + 1)).apply();
     }
 
@@ -275,6 +278,16 @@ public class LTForegroundRemoteService extends Service {
         sharedPref = getApplicationContext().getSharedPreferences("soundgymStep", Context.MODE_PRIVATE);
         String count = sharedPref.getString("stepCount", "0");
         return Integer.parseInt(count);
+    }
+
+    private void sendEvent(String eventName, @Nullable Object params) {
+        try {
+            ReactApplicationContext mReactApplicationContext =  (ReactApplicationContext) getApplicationContext();
+            mReactApplicationContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(eventName, params);
+        } catch (RuntimeException e) {
+            Log.e("ERROR", "java.lang.RuntimeException: Trying to invoke JS before CatalystInstance has been set!");
+        }
     }
 
 
