@@ -8,6 +8,8 @@ import android.app.Notification;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.leetaehong.foregroundservice.NotificationHelper.NotificationType;
 
 import android.content.ServiceConnection;
@@ -33,6 +35,11 @@ import static com.leetaehong.foregroundservice.Constants.MSG_ADDED_VALUE;
 import static com.leetaehong.foregroundservice.Constants.MSG_CLIENT_CONNECT;
 import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 import static com.leetaehong.foregroundservice.Constants.BACKGROUND_CONFIG;
+
+import androidx.annotation.Nullable;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
     private static final String TAG = "ForegroundServiceModule";
@@ -236,9 +243,25 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_ADDED_VALUE:
-                    Log.d(TAG, "Recevied MSG_ADDED_VALUE message from service ~ value :" + msg.arg1);
+                    try {
+                        JSONObject obj = new JSONObject();
+                        obj.put("refresh",true);
+                        sendEvent("fetchHealthData",obj);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                     break;
             }
         }
     }
+    private void sendEvent(String eventName, @Nullable Object params) {
+        try {
+            this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(eventName, params);
+        } catch (RuntimeException e) {
+            Log.e("ERROR", "java.lang.RuntimeException: Trying to invoke JS before CatalystInstance has been set!");
+        }
+    }
+
 }

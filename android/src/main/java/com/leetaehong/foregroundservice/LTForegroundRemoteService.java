@@ -1,5 +1,6 @@
 package com.leetaehong.foregroundservice;
 
+import static com.leetaehong.foregroundservice.Constants.MSG_ADDED_VALUE;
 import static com.leetaehong.foregroundservice.Constants.MSG_ADD_VALUE;
 import static com.leetaehong.foregroundservice.Constants.MSG_APP_DESTROY;
 import static com.leetaehong.foregroundservice.Constants.MSG_CLIENT_CONNECT;
@@ -18,26 +19,17 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
-
-import androidx.annotation.Nullable;
-
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Properties;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -251,9 +243,16 @@ public class LTForegroundRemoteService extends Service {
                                 currentStep += prevStep;
                                 sendStep += prevStep;
                                 saveStep(true);
-                                JSONObject obj = new JSONObject();
-                                obj.put("refresh",true);
-                                sendEvent("fetchHealthData",obj);
+                                for (int i = mClientCallbacks.size() - 1; i >= 0; i--) {
+                                    try {
+                                        Message added_msg = Message.obtain(
+                                                null, MSG_ADDED_VALUE);
+                                        added_msg.arg1 = 1;
+                                        mClientCallbacks.get(i).send(added_msg);
+                                    } catch (RemoteException e) {
+                                        mClientCallbacks.remove(i);
+                                    }
+                                }
                                 setTimeout(() -> callScheduleApi(false), 60000 * 20);
                             }
                         }
@@ -278,16 +277,6 @@ public class LTForegroundRemoteService extends Service {
         sharedPref = getApplicationContext().getSharedPreferences("soundgymStep", Context.MODE_PRIVATE);
         String count = sharedPref.getString("stepCount", "0");
         return Integer.parseInt(count);
-    }
-
-    private void sendEvent(String eventName, @Nullable Object params) {
-        try {
-            ReactApplicationContext mReactApplicationContext =  (ReactApplicationContext) getApplicationContext();
-            mReactApplicationContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(eventName, params);
-        } catch (RuntimeException e) {
-            Log.e("ERROR", "java.lang.RuntimeException: Trying to invoke JS before CatalystInstance has been set!");
-        }
     }
 
 
