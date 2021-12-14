@@ -267,11 +267,15 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
 
     private void sendEvent(String eventName, @Nullable Object params) {
         try {
-            if(this.reactContext.hasActiveReactInstance()) {
-                this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                        .emit(eventName, params);
+            if(this.reactContext != null) {
+                if(this.reactContext.hasActiveReactInstance()) {
+                    this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                            .emit(eventName, params);
+                } else {
+                    setTimeout(() -> sendEvent(eventName,params),1000);
+                }
             } else {
-                setTimeout(() -> sendEvent(eventName,params),1000);
+                Log.e(TAG, "this.reactContext null!!!!");
             }
         } catch (RuntimeException e) {
             Log.e("ERROR", "java.lang.RuntimeException: Trying to invoke JS before CatalystInstance has been set!");
