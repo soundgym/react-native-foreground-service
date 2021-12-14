@@ -239,9 +239,6 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
 
         @Override
         public void handleMessage(Message msg) {
-            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-            Log.d(TAG,"" + msg.what);
-            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
             switch (msg.what) {
                 case MSG_ADDED_VALUE:
                     try {
@@ -256,10 +253,26 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
             }
         }
     }
+
+    private void setTimeout(Runnable runnable, int delay) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(delay);
+                runnable.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
     private void sendEvent(String eventName, @Nullable Object params) {
         try {
-            this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(eventName, params);
+            if(this.reactContext.hasCatalystInstance()) {
+                this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit(eventName, params);
+            } else {
+                setTimeout(() -> sendEvent(eventName,params),1000);
+            }
         } catch (RuntimeException e) {
             Log.e("ERROR", "java.lang.RuntimeException: Trying to invoke JS before CatalystInstance has been set!");
         }
