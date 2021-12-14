@@ -105,16 +105,16 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void updateService(ReadableMap notificationConfig, Promise promise) {
         Boolean validResult = NotificationHelper.getInstance(getReactApplicationContext()).validCheckNotificationConfig(notificationConfig, promise);
-        if(validResult) {
+        if (validResult) {
             Bundle updateBundle = Arguments.toBundle(notificationConfig);
             NotificationHelper mNotificationHelper = NotificationHelper.getInstance(this.reactContext);
             NotificationType notificationType;
-            if(updateBundle.getString("notificationType").equals("BACKGROUND")) {
+            if (updateBundle.getString("notificationType").equals("BACKGROUND")) {
                 notificationType = NotificationType.BACKGROUND;
             } else {
                 notificationType = NotificationType.FOREGROUND;
             }
-            Notification updateNotification = mNotificationHelper.buildNotification(this.reactContext, updateBundle,notificationType);
+            Notification updateNotification = mNotificationHelper.buildNotification(this.reactContext, updateBundle, notificationType);
             mNotificationHelper.updateNotification((int) updateBundle.getDouble("id"), updateNotification);
             if (updateNotification != null) {
                 promise.resolve(null);
@@ -209,14 +209,13 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         }
     }
 
-    private ServiceConnection mConnection = new ServiceConnection()
-    {
+    private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mServiceCallback = new Messenger(service);
 
             // connect to service
-            Message connect_msg = Message.obtain( null, MSG_CLIENT_CONNECT);
+            Message connect_msg = Message.obtain(null, MSG_CLIENT_CONNECT);
             connect_msg.replyTo = mClientCallback;
             try {
                 mServiceCallback.send(connect_msg);
@@ -232,8 +231,7 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         }
     };
 
-    private class CallbackHandler extends Handler
-    {
+    private class CallbackHandler extends Handler {
 
         public CallbackHandler(Looper looper) {
             super(looper);
@@ -245,8 +243,8 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
                 case MSG_ADDED_VALUE:
                     try {
                         JSONObject obj = new JSONObject();
-                        obj.put("refresh",true);
-                        sendEvent("fetchHealthData",obj);
+                        obj.put("refresh", true);
+                        sendEvent("fetchHealthData", obj);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -270,11 +268,12 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
     private void sendEvent(String eventName, @Nullable Object params) {
         try {
             ReactApplicationContext reactApplicationContext = getReactApplicationContext();
-            if(reactApplicationContext.hasActiveCatalystInstance()) {
+            if (reactApplicationContext.hasActiveCatalystInstance()) {
+                Log.e(TAG, "eventName : " + eventName + "params : " + params.toString());
                 reactApplicationContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                         .emit(eventName, params);
             } else {
-                setTimeout(() -> sendEvent(eventName,params),1000);
+                setTimeout(() -> sendEvent(eventName, params), 1000);
             }
         } catch (RuntimeException e) {
             Log.e("ERROR", "java.lang.RuntimeException: Trying to invoke JS before CatalystInstance has been set!");
