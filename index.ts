@@ -72,6 +72,7 @@ export interface INotificationConfig {
  *                              -2 - PRIORITY_MIN,
  *                              1 - PRIORITY_HIGH,
  *                              2- PRIORITY_MAX
+ *
  */
 export interface IBackgroundConfig {
   taskName?: string;
