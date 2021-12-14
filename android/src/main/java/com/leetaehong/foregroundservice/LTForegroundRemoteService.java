@@ -50,7 +50,7 @@ public class LTForegroundRemoteService extends Service {
 
     private ArrayList<Messenger> mClientCallbacks = new ArrayList<>();
     final Messenger mMessenger = new Messenger(new CallbackHandler());
-    private final SharedPreferences sharedPref = getApplicationContext().getSharedPreferences("soundgymStep", Context.MODE_PRIVATE);
+    private SharedPreferences sharedPref;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -259,11 +259,12 @@ public class LTForegroundRemoteService extends Service {
             }
         });
     }
-//
-//    private void saveStep(boolean init) {
-//        int step = getStep();
-//        sharedPref.edit().putString("stepCount", String.valueOf(init ? 0 : step + 1));
-//    }
+
+    private void saveStep(boolean init) {
+        sharedPref = getApplicationContext().getSharedPreferences("soundgymStep", Context.MODE_PRIVATE);
+        int step = getStep();
+        sharedPref.edit().putString("stepCount", String.valueOf(init ? 0 : step + 1));
+    }
 
     private int getStep() {
         String count = sharedPref.getString("stepCount", "0");
