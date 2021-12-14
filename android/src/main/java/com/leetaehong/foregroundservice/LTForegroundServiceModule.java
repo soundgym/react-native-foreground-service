@@ -36,6 +36,7 @@ import static com.leetaehong.foregroundservice.Constants.MSG_CLIENT_CONNECT;
 import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 import static com.leetaehong.foregroundservice.Constants.BACKGROUND_CONFIG;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.json.JSONException;
@@ -47,7 +48,7 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
     private final ReactApplicationContext reactContext;
 
     private Messenger mServiceCallback = null;
-    private Messenger mClientCallback = null;
+    private Messenger mClientCallback;
 
     public LTForegroundServiceModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -55,6 +56,7 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         mClientCallback = new Messenger(new CallbackHandler(Looper.getMainLooper()));
     }
 
+    @NonNull
     @Override
     public String getName() {
         return "LTForegroundService";
@@ -107,7 +109,7 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
             Bundle updateBundle = Arguments.toBundle(notificationConfig);
             NotificationHelper mNotificationHelper = NotificationHelper.getInstance(this.reactContext);
             NotificationType notificationType;
-            if(updateBundle.getString("notificationType") == "BACKGROUND") {
+            if(updateBundle.getString("notificationType").equals("BACKGROUND")) {
                 notificationType = NotificationType.BACKGROUND;
             } else {
                 notificationType = NotificationType.FOREGROUND;
@@ -267,15 +269,12 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
 
     private void sendEvent(String eventName, @Nullable Object params) {
         try {
-            if(this.reactContext != null) {
-                if(this.reactContext.hasActiveReactInstance()) {
-                    this.reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                            .emit(eventName, params);
-                } else {
-                    setTimeout(() -> sendEvent(eventName,params),1000);
-                }
+            ReactApplicationContext reactApplicationContext = getReactApplicationContext();
+            if(reactApplicationContext.hasActiveReactInstance()) {
+                reactApplicationContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit(eventName, params);
             } else {
-                Log.e(TAG, "this.reactContext null!!!!");
+                setTimeout(() -> sendEvent(eventName,params),1000);
             }
         } catch (RuntimeException e) {
             Log.e("ERROR", "java.lang.RuntimeException: Trying to invoke JS before CatalystInstance has been set!");
