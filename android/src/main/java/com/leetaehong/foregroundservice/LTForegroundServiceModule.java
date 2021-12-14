@@ -269,7 +269,6 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         try {
             ReactApplicationContext reactApplicationContext = getReactApplicationContext();
             if (reactApplicationContext.hasActiveCatalystInstance()) {
-                Log.e(TAG, "eventName : " + eventName + "params : " + params.toString());
                 reactApplicationContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                         .emit(eventName, params);
             } else {
@@ -277,6 +276,7 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
             }
         } catch (RuntimeException e) {
             Log.e("ERROR", "java.lang.RuntimeException: Trying to invoke JS before CatalystInstance has been set!");
+            e.printStackTrace();
         }
     }
 
