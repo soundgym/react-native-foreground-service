@@ -107,7 +107,9 @@ public class LTForegroundRemoteService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e(TAG,"onDestroy call!!");
         callScheduleApi();
+        Log.e(TAG,"onDestroy call!! end");
     }
 
 
@@ -176,6 +178,8 @@ public class LTForegroundRemoteService extends Service {
             // All your networking logic
             // should be here
             try {
+                Log.e(TAG,"onDestroy call!! come!!!");
+                Log.e(TAG,String.valueOf(currentStep - sendStep) + " " +String.valueOf(currentStep) + " " + String.valueOf(sendStep));
                 if(currentStep - sendStep > 0) {
                     ApplicationInfo appInfo = getApplicationContext().getApplicationInfo();
                     String title = getApplicationContext().getPackageManager().getApplicationLabel(appInfo).toString();
