@@ -9,6 +9,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.leetaehong.foregroundservice.NotificationHelper.NotificationType;
 
@@ -241,14 +243,9 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_ADDED_VALUE:
-                    try {
-                        JSONObject obj = new JSONObject();
-                        obj.put("refresh", true);
-                        sendEvent("fetchHealthData", obj);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
+                    WritableMap resultData = new WritableNativeMap();
+                    resultData.putBoolean("refresh", true);
+                    sendEvent("fetchHealthData", resultData);
                     break;
             }
         }
@@ -265,7 +262,7 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         }).start();
     }
 
-    private void sendEvent(String eventName, @Nullable Object params) {
+    private void sendEvent(String eventName, @Nullable WritableMap params) {
         try {
             ReactApplicationContext reactApplicationContext = getReactApplicationContext();
             if (reactApplicationContext.hasActiveCatalystInstance()) {
