@@ -112,19 +112,21 @@ public class LTForegroundRemoteService extends Service {
     public void onDestroy() {
         super.onDestroy();
         callScheduleApi(true);
+        LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext());
+        ltSensorListner.stop();
     }
 
 
     private class CallbackHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
+            LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext());
             switch (msg.what) {
                 case MSG_CLIENT_CONNECT:
-                    Log.d(TAG, "Received MSG_CLIENT_CONNECT message from client");
                     mClientCallbacks.add(msg.replyTo);
+                    ltSensorListner.stop();
                     break;
                 case MSG_CLIENT_DISCONNECT:
-                    Log.d(TAG, "Received MSG_CLIENT_DISCONNECT message from client");
                     mClientCallbacks.remove(msg.replyTo);
                     break;
                 case MSG_ADD_VALUE:
@@ -144,7 +146,6 @@ public class LTForegroundRemoteService extends Service {
                     break;
                 case MSG_APP_DESTROY:
                     Log.d(TAG, "Received MSG_APP_DESTROY message from client");
-                    LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext(), prevBundle);
                     ltSensorListner.start(1000);
                     break;
             }
