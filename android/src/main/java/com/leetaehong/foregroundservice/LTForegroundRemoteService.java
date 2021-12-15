@@ -127,11 +127,9 @@ public class LTForegroundRemoteService extends Service {
     private class CallbackHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext());
             switch (msg.what) {
                 case MSG_CLIENT_CONNECT:
                     mClientCallbacks.add(msg.replyTo);
-                    ltSensorListner.stop();
                     break;
                 case MSG_CLIENT_DISCONNECT:
                     mClientCallbacks.remove(msg.replyTo);
@@ -152,6 +150,7 @@ public class LTForegroundRemoteService extends Service {
 //                    }
                     break;
                 case MSG_APP_DESTROY:
+                    LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext());
                     Log.d(TAG, "Received MSG_APP_DESTROY message from client");
                     ltSensorListner.start(1000);
                     break;
