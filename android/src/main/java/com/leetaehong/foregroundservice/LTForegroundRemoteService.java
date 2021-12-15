@@ -154,7 +154,14 @@ public class LTForegroundRemoteService extends Service {
     }
 
     private int changeStepCount(Bundle bundle, Boolean isFirst) {
+        Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ bundle");
+        Log.d(TAG,bundle.toString());
+        Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ text");
         String stepText = bundle.getString("text");
+        Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        Log.d(TAG,stepText);
+        Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
         stepText = stepText.replaceAll("[^0-9]", "");  // or you can also use [0-9]
         int step = Integer.parseInt(stepText);
         currentStep = step + 1;
