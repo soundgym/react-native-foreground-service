@@ -80,13 +80,11 @@ public class LTForegroundRemoteService extends Service {
                     break;
                 case Constants.ACTION_FOREGROUND_SERVICE_STOP:
                     stopSelf();
+                    stopForeground(true);
                     NotificationHelper.getInstance(getApplicationContext()).cancelAllNotification();
                     break;
                 case Constants.ACTION_FOREGROUND_SERVICE_UPDATE:
                     Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
-                    Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@ ACTION_FOREGROUND_SERVICE_UPDATE ");
-                    Log.d(TAG,"" + notificationConfig);
-                    Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@ ACTION_FOREGROUND_SERVICE_UPDATE end");
                     // 최근 데이터 저장
                     prevBundle = notificationConfig;
                     // 걸음수 변수에 저장
@@ -97,9 +95,6 @@ public class LTForegroundRemoteService extends Service {
                     NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"), updateNotification);
                     break;
                 case Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE:
-                    Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@ ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE ");
-                    Log.d(TAG,"" + prevBundle);
-                    Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@ ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE end");
                     changeStepCount(prevBundle, false);
                     saveStep(false);
                     prevBundle.remove("text");
@@ -159,14 +154,7 @@ public class LTForegroundRemoteService extends Service {
     }
 
     private int changeStepCount(Bundle bundle, Boolean isFirst) {
-        Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ bundle");
-        Log.d(TAG,bundle.toString());
-        Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ text");
         String stepText = bundle.getString("text");
-        Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        Log.d(TAG,stepText);
-        Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-
         stepText = stepText.replaceAll("[^0-9]", "");  // or you can also use [0-9]
         int step = Integer.parseInt(stepText);
         currentStep = step + 1;
