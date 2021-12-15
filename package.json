@@ -1,6 +1,6 @@
 {
   "name": "react-native-foreground-service-android",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "React native module to start foreground service on android",
   "main": "index.js",
   "types": "index.d.ts",

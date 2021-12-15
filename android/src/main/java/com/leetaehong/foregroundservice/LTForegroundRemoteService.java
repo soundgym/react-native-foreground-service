@@ -99,7 +99,7 @@ public class LTForegroundRemoteService extends Service {
                     changeStepCount(prevBundle, false);
                     saveStep(false);
                     prevBundle.remove("text");
-                    prevBundle.putString("text", currentStep + " (보)");
+                    prevBundle.putString("text", currentStep + " 걸음");
                     Notification updateNotificationTwo = NotificationHelper.getInstance(getApplicationContext())
                             .buildNotification(getApplicationContext(), prevBundle, NotificationHelper.NotificationType.BACKGROUND);
                     NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) prevBundle.getDouble("id"), updateNotificationTwo);
