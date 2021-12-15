@@ -187,7 +187,7 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
             Bundle updateBundle = Arguments.toBundle(notificationConfig);
             Intent intent = new Intent(getReactApplicationContext(), LTForegroundRemoteService.class);
             intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_UPDATE);
-            intent.putExtra(NOTIFICATION_CONFIG, Arguments.toBundle(notificationConfig));
+            intent.putExtra(NOTIFICATION_CONFIG, updateBundle);
             getReactApplicationContext().startService(intent);
             if (updateBundle != null) {
                 promise.resolve(null);

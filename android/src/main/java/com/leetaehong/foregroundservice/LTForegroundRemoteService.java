@@ -84,6 +84,9 @@ public class LTForegroundRemoteService extends Service {
                     break;
                 case Constants.ACTION_FOREGROUND_SERVICE_UPDATE:
                     Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
+                    Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@ ACTION_FOREGROUND_SERVICE_UPDATE ");
+                    Log.d(TAG,"" + notificationConfig);
+                    Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@ ACTION_FOREGROUND_SERVICE_UPDATE end");
                     // 최근 데이터 저장
                     prevBundle = notificationConfig;
                     // 걸음수 변수에 저장
