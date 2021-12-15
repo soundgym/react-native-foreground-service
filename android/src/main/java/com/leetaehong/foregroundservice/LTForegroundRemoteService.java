@@ -112,7 +112,7 @@ public class LTForegroundRemoteService extends Service {
                     break;
             }
         }
-        return START_REDELIVER_INTENT;
+        return START_NOT_STICKY;
     }
 
     @Override
