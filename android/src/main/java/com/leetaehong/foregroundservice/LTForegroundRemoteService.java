@@ -97,6 +97,9 @@ public class LTForegroundRemoteService extends Service {
                     NotificationHelper.getInstance(getApplicationContext()).updateNotification((int) notificationConfig.getDouble("id"), updateNotification);
                     break;
                 case Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE:
+                    Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@ ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE ");
+                    Log.d(TAG,"" + prevBundle);
+                    Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@@@@@@ ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE end");
                     changeStepCount(prevBundle, false);
                     saveStep(false);
                     prevBundle.remove("text");
