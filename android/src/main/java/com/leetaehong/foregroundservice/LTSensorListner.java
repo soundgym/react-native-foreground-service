@@ -9,6 +9,10 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
+
+import java.util.List;
+
 
 public class LTSensorListner implements SensorEventListener {
 //    private final String TAG = "LTSensorListner";
@@ -27,6 +31,12 @@ public class LTSensorListner implements SensorEventListener {
 
     public int start(int delay) {
         this.delay = delay;
+        List<Sensor> sensors = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+        if(sensors.size() > 0) {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                removeListener(sensors);
+            }
+        }
         mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         if (mStepCounter != null) {
             mSensorManager.registerListener(this, mStepCounter, SensorManager.SENSOR_DELAY_FASTEST);
@@ -62,5 +72,12 @@ public class LTSensorListner implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void removeListener(List<Sensor> sensors) {
+        sensors.forEach(sensor -> {
+            mSensorManager.unregisterListener(this,sensor);
+        });
     }
 }

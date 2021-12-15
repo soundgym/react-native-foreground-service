@@ -49,6 +49,7 @@ public class LTForegroundRemoteService extends Service {
     private ArrayList<Messenger> mClientCallbacks = new ArrayList<>();
     final Messenger mMessenger = new Messenger(new CallbackHandler());
     private SharedPreferences sharedPref;
+    private LTSensorListner ltSensorListner;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -145,7 +146,9 @@ public class LTForegroundRemoteService extends Service {
 //                    }
                     break;
                 case MSG_APP_DESTROY:
-                    LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext());
+                    if(ltSensorListner == null) {
+                        ltSensorListner = new LTSensorListner(getApplicationContext());
+                    }
                     Log.d(TAG, "Received MSG_APP_DESTROY message from client");
                     ltSensorListner.start(1000);
                     break;
