@@ -80,9 +80,17 @@ public class LTForegroundRemoteService extends Service {
                     }
                     break;
                 case Constants.ACTION_FOREGROUND_SERVICE_STOP:
+                    // remote service 종료
                     stopSelf();
                     stopForeground(true);
+                    // notification 띄워둔것 삭제
+                    NotificationHelper.getInstance(getApplicationContext()).cancelNotification((int) prevBundle.getDouble("id"));
                     NotificationHelper.getInstance(getApplicationContext()).cancelAllNotification();
+                    // 리스너 삭제
+                    if(ltSensorListner == null) {
+                        ltSensorListner = new LTSensorListner(getApplicationContext());
+                    }
+                    ltSensorListner.stop();
                     break;
                 case Constants.ACTION_FOREGROUND_SERVICE_UPDATE:
                     Bundle notificationConfig = intent.getExtras().getBundle(NOTIFICATION_CONFIG);
@@ -115,7 +123,9 @@ public class LTForegroundRemoteService extends Service {
     public void onDestroy() {
         super.onDestroy();
         callScheduleApi(true);
-        LTSensorListner ltSensorListner = new LTSensorListner(getApplicationContext());
+        if(ltSensorListner == null) {
+            ltSensorListner = new LTSensorListner(getApplicationContext());
+        }
         ltSensorListner.stop();
     }
 
@@ -150,7 +160,11 @@ public class LTForegroundRemoteService extends Service {
                         ltSensorListner = new LTSensorListner(getApplicationContext());
                     }
                     Log.d(TAG, "Received MSG_APP_DESTROY message from client");
-                    ltSensorListner.start(1000);
+                    //채널 차단여부 확인
+                    Boolean enabled =  NotificationHelper.getInstance(getApplicationContext()).isNotificationChannelEnabled(getApplicationContext(),prevBundle.getString("channelId"));
+                    if(enabled) {
+                        ltSensorListner.start(1000);
+                    }
                     break;
             }
         }

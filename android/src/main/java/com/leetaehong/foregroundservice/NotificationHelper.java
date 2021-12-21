@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.facebook.react.bridge.Promise;
@@ -19,6 +20,9 @@ import com.facebook.react.bridge.ReadableMap;
 
 import static com.leetaehong.foregroundservice.Constants.ERROR_ANDROID_VERSION;
 import static com.leetaehong.foregroundservice.Constants.ERROR_INVALID_CONFIG;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationManagerCompat;
 
 class NotificationHelper {
     private static NotificationHelper instance = null;
@@ -141,7 +145,6 @@ class NotificationHelper {
 
         if (ongoing) {
             notificationBuilder.setOngoing(true);
-            notificationBuilder.setAutoCancel(false);
         }
 
         if (NotificationType.BACKGROUND.equals(notificationType)) {
@@ -167,6 +170,10 @@ class NotificationHelper {
      */
     void updateNotification(int notificationId, Notification notification) {
         mNotificationManager.notify(notificationId, notification);
+    }
+
+    void cancelNotification(int notificationId) {
+        mNotificationManager.cancel(notificationId);
     }
 
     void cancelAllNotification() {
@@ -207,6 +214,19 @@ class NotificationHelper {
         }
 
         return true;
+    }
+
+    public boolean isNotificationChannelEnabled(Context context, @Nullable String channelId){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if(!TextUtils.isEmpty(channelId)) {
+                NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationChannel channel = manager.getNotificationChannel(channelId);
+                return channel.getImportance() != NotificationManager.IMPORTANCE_NONE;
+            }
+            return false;
+        } else {
+            return NotificationManagerCompat.from(context).areNotificationsEnabled();
+        }
     }
 
 
