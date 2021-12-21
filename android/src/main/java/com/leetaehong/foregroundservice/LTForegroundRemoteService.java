@@ -293,7 +293,13 @@ public class LTForegroundRemoteService extends Service {
 
     private void saveStep(boolean init) {
         int step = getStep();
-        sharedPref.edit().putString("stepCount", String.valueOf(init ? 0 : step + 1)).apply();
+        if(init) {
+            sharedPref.edit().remove("stepCount");
+            sharedPref.edit().putString("stepCount", "0").apply();
+        } else {
+            sharedPref.edit().putString("stepCount", String.valueOf(step + 1)).apply();
+        }
+
     }
 
     private int getStep() {
