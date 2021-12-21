@@ -188,7 +188,7 @@ class NotificationHelper {
             if(channelId != null) {
                 final NotificationChannel channel = mNotificationManager.getNotificationChannel(channelId);
                 if(channel != null && NotificationManager.IMPORTANCE_NONE != channel.getImportance()) {
-                    channel.setImportance(NotificationManager.IMPORTANCE_NONE);
+                    mNotificationManager.deleteNotificationChannel(channelId);
                 }
             }
         }
