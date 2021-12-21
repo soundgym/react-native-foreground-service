@@ -34,6 +34,9 @@ export interface IBackgroundConfig {
     uid?: string;
     userToken?: string;
 }
+export interface IBlockChannelConfig {
+    channelId?: string;
+}
 export interface ILTForegroundService {
     createNotificationChannel(channelConfig: IChannelConfig): Promise<void>;
     startService(notificationConfig: INotificationConfig): Promise<void>;
@@ -44,6 +47,7 @@ export interface ILTForegroundService {
     startRemoteService(notificationConfig: INotificationConfig): Promise<void>;
     stopRemoteService(): Promise<void>;
     updateRemoteService(notificationConfig: INotificationConfig): Promise<void>;
+    blockNotificationChannel(channelConfig: IBlockChannelConfig): Promise<void>;
     getIsBackgroundRunning(): boolean;
     getIsRunning(): boolean;
 }

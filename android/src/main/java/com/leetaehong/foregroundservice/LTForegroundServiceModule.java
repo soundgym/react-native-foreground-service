@@ -211,6 +211,17 @@ public class LTForegroundServiceModule extends ReactContextBaseJavaModule {
         }
     }
 
+    @ReactMethod
+    public void blockNotificationChannel(ReadableMap channelConfig,Promise promise) {
+        Bundle channelBundle = Arguments.toBundle(channelConfig);
+        NotificationHelper.getInstance(getReactApplicationContext()).blockNotificationChannel(channelBundle);
+        if(channelBundle != null) {
+            promise.resolve(null);
+        } else {
+            promise.reject(ERROR_SERVICE_ERROR, "LTForegroundService: blockNotificationChannel channelId is null");
+        }
+    }
+
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {

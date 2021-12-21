@@ -4,6 +4,8 @@
 
 package com.leetaehong.foregroundservice;
 
+import static android.app.NotificationManager.IMPORTANCE_NONE;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -180,6 +182,18 @@ class NotificationHelper {
         mNotificationManager.cancelAll();
     }
 
+    void blockNotificationChannel(Bundle channelConfig) {
+        String channelId = channelConfig.getString("channelId");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if(channelId != null) {
+                final NotificationChannel channel = mNotificationManager.getNotificationChannel(channelId);
+                if(channel != null && NotificationManager.IMPORTANCE_NONE != channel.getImportance()) {
+                    channel.setImportance(NotificationManager.IMPORTANCE_NONE);
+                }
+            }
+        }
+    }
+
     Boolean validCheckNotificationConfig(ReadableMap notificationConfig, Promise promise) {
         if (notificationConfig == null) {
             promise.reject(ERROR_INVALID_CONFIG, "LTForegroundService: Notification config is invalid");
@@ -221,7 +235,7 @@ class NotificationHelper {
             if(!TextUtils.isEmpty(channelId)) {
                 NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 NotificationChannel channel = manager.getNotificationChannel(channelId);
-                return channel.getImportance() != NotificationManager.IMPORTANCE_NONE;
+                return channel.getImportance() != IMPORTANCE_NONE;
             }
             return false;
         } else {

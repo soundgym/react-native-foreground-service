@@ -88,6 +88,14 @@ export interface IBackgroundConfig {
   userToken?: string;
 }
 
+/**
+ * @property {string} channelId - Notification channel id to display notification
+ *
+ */
+export interface IBlockChannelConfig {
+  channelId?: string;
+}
+
 export interface ILTForegroundService {
   createNotificationChannel(channelConfig: IChannelConfig): Promise<void>;
 
@@ -109,6 +117,8 @@ export interface ILTForegroundService {
   stopRemoteService(): Promise<void>;
 
   updateRemoteService(notificationConfig: INotificationConfig): Promise<void>;
+
+  blockNotificationChannel(channelConfig: IBlockChannelConfig): Promise<void>;
 
   getIsBackgroundRunning(): boolean;
   getIsRunning(): boolean;
@@ -230,6 +240,15 @@ const LTForegroundService: ILTForegroundService = {
    */
   updateRemoteService: async (notificationConfig) => {
     await ForegroundServiceModule.updateRemoteService(notificationConfig);
+  },
+
+  /**
+   * Block Notification Channel
+   * @param {IBlockChannelConfig} channelConfig - Notification block channel config
+   * @return void
+   */
+  blockNotificationChannel: async (channelConfig) => {
+    await ForegroundServiceModule.blockNotificationChannel(channelConfig);
   },
 
   getIsBackgroundRunning: () => {

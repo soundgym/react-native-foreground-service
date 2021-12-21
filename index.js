@@ -67,6 +67,9 @@ const LTForegroundService = {
     updateRemoteService: async (notificationConfig) => {
         await ForegroundServiceModule.updateRemoteService(notificationConfig);
     },
+    blockNotificationChannel: async (channelConfig) => {
+        await ForegroundServiceModule.blockNotificationChannel(channelConfig);
+    },
     getIsBackgroundRunning: () => {
         return isBackgroundRunning;
     },
