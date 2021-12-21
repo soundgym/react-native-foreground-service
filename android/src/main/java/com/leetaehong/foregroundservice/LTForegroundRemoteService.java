@@ -122,7 +122,6 @@ public class LTForegroundRemoteService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        callScheduleApi(true);
         if(ltSensorListner == null) {
             ltSensorListner = new LTSensorListner(getApplicationContext());
         }
