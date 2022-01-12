@@ -132,15 +132,16 @@ public class LTForegroundRemoteService extends Service {
     private class CallbackHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MSG_CLIENT_CONNECT:
-                    mClientCallbacks.add(msg.replyTo);
-                    break;
-                case MSG_CLIENT_DISCONNECT:
-                    mClientCallbacks.remove(msg.replyTo);
-                    break;
-                case MSG_ADD_VALUE:
-                    Log.d(TAG, "Received message from client: MSG_ADD_VALUE");
+            if(msg != null) {
+                switch (msg.what) {
+                    case MSG_CLIENT_CONNECT:
+                        mClientCallbacks.add(msg.replyTo);
+                        break;
+                    case MSG_CLIENT_DISCONNECT:
+                        mClientCallbacks.remove(msg.replyTo);
+                        break;
+                    case MSG_ADD_VALUE:
+                        Log.d(TAG, "Received message from client: MSG_ADD_VALUE");
 //                    for (int i = mClientCallbacks.size() - 1; i >= 0; i--) {
 //                        try{
 //                            Log.d(TAG, "Send MSG_ADDED_VALUE message to client");
@@ -153,18 +154,21 @@ public class LTForegroundRemoteService extends Service {
 //                            mClientCallbacks.remove( i );
 //                        }
 //                    }
-                    break;
-                case MSG_APP_DESTROY:
-                    if(ltSensorListner == null) {
-                        ltSensorListner = new LTSensorListner(getApplicationContext());
-                    }
-                    Log.d(TAG, "Received MSG_APP_DESTROY message from client");
-                    //채널 차단여부 확인
-                    Boolean enabled =  NotificationHelper.getInstance(getApplicationContext()).isNotificationChannelEnabled(getApplicationContext(),prevBundle.getString("channelId"));
-                    if(enabled) {
-                        ltSensorListner.start(1000);
-                    }
-                    break;
+                        break;
+                    case MSG_APP_DESTROY:
+                        if(ltSensorListner == null) {
+                            ltSensorListner = new LTSensorListner(getApplicationContext());
+                        }
+                        Log.d(TAG, "Received MSG_APP_DESTROY message from client");
+                        //채널 차단여부 확인
+                        if(prevBundle != null) {
+                            Boolean enabled =  NotificationHelper.getInstance(getApplicationContext()).isNotificationChannelEnabled(getApplicationContext(),prevBundle.getString("channelId"));
+                            if(enabled) {
+                                ltSensorListner.start(1000);
+                            }
+                        }
+                        break;
+                }
             }
         }
     }
