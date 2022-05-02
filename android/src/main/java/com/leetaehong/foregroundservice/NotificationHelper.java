@@ -231,15 +231,19 @@ class NotificationHelper {
     }
 
     public boolean isNotificationChannelEnabled(Context context, @Nullable String channelId){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if(!TextUtils.isEmpty(channelId)) {
-                NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                NotificationChannel channel = manager.getNotificationChannel(channelId);
-                return channel.getImportance() != IMPORTANCE_NONE;
-            }
+        try{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        if(!TextUtils.isEmpty(channelId)) {
+                            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                            NotificationChannel channel = manager.getNotificationChannel(channelId);
+                            return channel.getImportance() != IMPORTANCE_NONE;
+                        }
+                        return false;
+                    } else {
+                        return NotificationManagerCompat.from(context).areNotificationsEnabled();
+                    }
+        }catch(Exception e) {
             return false;
-        } else {
-            return NotificationManagerCompat.from(context).areNotificationsEnabled();
         }
     }
 
