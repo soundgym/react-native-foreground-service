@@ -58,6 +58,8 @@ public class LTForegroundRemoteService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // PendingIntent 생성 시 FLAG_IMMUTABLE 플래그 추가
+        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), requestCode, intent, PendingIntent.FLAG_IMMUTABLE);
         String action = intent.getAction();
         if (action != null) {
             switch (action) {
@@ -71,6 +73,8 @@ public class LTForegroundRemoteService extends Service {
                                 notification.flags |= Notification.FLAG_ONGOING_EVENT;
                                 notification.flags |= Notification.FLAG_SHOW_LIGHTS;
                             }
+                            // PendingIntent에 FLAG_IMMUTABLE 플래그 추가
+                            notification.contentIntent = pendingIntent;
                             startForeground((int) notificationConfig.getDouble("id"), notification);
                             userId = notificationConfig.getString("uid");
                             userToken = notificationConfig.getString("userToken");
