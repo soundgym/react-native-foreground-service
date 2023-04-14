@@ -86,6 +86,8 @@ class NotificationHelper {
     }
 
     Notification buildNotification(Context context, Bundle notificationConfig, NotificationType notificationType) {
+        // requestCode를 고유한 값으로 설정
+        int requestCode = 1991;
         if (notificationConfig == null) {
             Log.e("NotificationHelper", "buildNotification: invalid config");
             return null;
@@ -95,7 +97,12 @@ class NotificationHelper {
             return null;
         }
         Intent notificationIntent = new Intent(context, mainActivityClass);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        final PendingIntent pendingIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            pendingIntent = PendingIntent.getActivity(context, requestCode, notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        } else {
+            pendingIntent = PendingIntent.getActivity(context, requestCode, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         Notification.Builder notificationBuilder;
 
@@ -152,9 +159,9 @@ class NotificationHelper {
         if (NotificationType.BACKGROUND.equals(notificationType)) {
             final PendingIntent contentIntent;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                contentIntent = PendingIntent.getActivity(context, requestCode, notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
             } else {
-                contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                contentIntent = PendingIntent.getActivity(context, requestCode, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             }
             notificationBuilder.setContentIntent(contentIntent);
         }
