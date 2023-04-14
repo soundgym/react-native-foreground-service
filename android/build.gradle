@@ -23,7 +23,7 @@ buildscript {
         dependencies {
             // This should reflect the Gradle plugin version used by
             // the minimum React Native version supported.
-            classpath 'com.android.tools.build:gradle:4.2.2'
+            classpath "com.android.tools.build:gradle:7.3.1"
             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         }
     }

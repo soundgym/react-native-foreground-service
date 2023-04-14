@@ -8,6 +8,7 @@ import static com.leetaehong.foregroundservice.Constants.MSG_CLIENT_DISCONNECT;
 import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -58,6 +59,8 @@ public class LTForegroundRemoteService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // requestCode를 고유한 값으로 설정
+        int requestCode = 1991;
         // PendingIntent 생성 시 FLAG_IMMUTABLE 플래그 추가
         PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), requestCode, intent, PendingIntent.FLAG_IMMUTABLE);
         String action = intent.getAction();
