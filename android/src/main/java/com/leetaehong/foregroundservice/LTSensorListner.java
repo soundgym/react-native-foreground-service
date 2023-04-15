@@ -59,6 +59,7 @@ public class LTSensorListner implements SensorEventListener {
 //                int stepCount = (int)sensorEvent.values[0];
                 Intent intent = new Intent(mContext.getApplicationContext(), LTForegroundRemoteService.class);
                 intent.setAction(Constants.ACTION_FOREGROUND_SERVICE_REMOTE_UPDATE);
+                System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ call!!!!!!!!!!! onSensorChanged");
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     mContext.startForegroundService(intent);
                 } else {

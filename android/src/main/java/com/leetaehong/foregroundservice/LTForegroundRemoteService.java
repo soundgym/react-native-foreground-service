@@ -7,6 +7,7 @@ import static com.leetaehong.foregroundservice.Constants.MSG_CLIENT_CONNECT;
 import static com.leetaehong.foregroundservice.Constants.MSG_CLIENT_DISCONNECT;
 import static com.leetaehong.foregroundservice.Constants.NOTIFICATION_CONFIG;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -31,6 +32,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -72,11 +74,15 @@ public class LTForegroundRemoteService extends Service {
                                 notification.flags |= Notification.FLAG_ONGOING_EVENT;
                                 notification.flags |= Notification.FLAG_SHOW_LIGHTS;
                             }
-                            startForeground((int) notificationConfig.getDouble("id"), notification);
-                            userId = notificationConfig.getString("uid");
-                            userToken = notificationConfig.getString("userToken");
-                            changeStepCount(notificationConfig, true);
-                            callScheduleApi(true);
+                            if(isForeground()) {
+                                callScheduleApi(true);
+                            } else {
+                                startForeground((int) notificationConfig.getDouble("id"), notification);
+                                userId = notificationConfig.getString("uid");
+                                userToken = notificationConfig.getString("userToken");
+                                changeStepCount(notificationConfig, true);
+                                callScheduleApi(true);
+                            }
                         }
                     }
                     break;
@@ -209,7 +215,8 @@ public class LTForegroundRemoteService extends Service {
                 if (forceCall || currentStep - sendStep > 0) {
                     ApplicationInfo appInfo = getApplicationContext().getApplicationInfo();
                     String title = getApplicationContext().getPackageManager().getApplicationLabel(appInfo).toString();
-                    String apiPath = "https://api.dev.soundgym.kr/app/user/health/steps";
+//                    String apiPath = "https://api.dev.soundgym.kr/app/user/health/steps";
+                    String apiPath = "http://10.4.3.53:8080/app/user/health/steps";
                     if (!title.contains("dev")) {
                         apiPath = "https://api.soundgym.kr/app/user/health/steps";
                     }
@@ -312,5 +319,18 @@ public class LTForegroundRemoteService extends Service {
         return Integer.parseInt(count);
     }
 
+    // 서비스가 Foreground 상태인지를 확인하는 메서드
+    private boolean isForeground() {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> runningServices = manager.getRunningServices(Integer.MAX_VALUE);
+        for (ActivityManager.RunningServiceInfo service : runningServices) {
+            if (LTForegroundRemoteService.class.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }
+
